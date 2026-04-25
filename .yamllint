@@ -4,6 +4,7 @@ extends: default
 ignore: |
   .git/
   node_modules/
+  .tools/
 
 rules:
   document-start: disable

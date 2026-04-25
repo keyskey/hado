@@ -36,3 +36,34 @@ jobs:
 
       - name: Lint Markdown
         run: markdownlint-cli2
+
+  go-lint:
+    name: Go
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Check Go formatting
+        run: |
+          files="$(git ls-files '*.go')"
+          if [ -z "$files" ]; then
+            exit 0
+          fi
+
+          unformatted="$(gofmt -l $files)"
+          if [ -n "$unformatted" ]; then
+            echo "These Go files need gofmt:"
+            echo "$unformatted"
+            exit 1
+          fi
+
+      - name: Lint Go
+        run: go vet ./...
