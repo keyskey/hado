@@ -21,3 +21,14 @@ HADO という名前は「波動砲」から来ています。波動砲は、日
 ## Docs
 
 - [Project HADO ドキュメント](docs/README.md)
+- [ローカル開発コマンド](docs/local-development.md)
+
+## Build and run
+
+ローカルで `hado` CLI をビルドして実行する最小手順です。
+
+```bash
+make build
+./bin/hado version
+./bin/hado
+```
