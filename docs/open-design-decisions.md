@@ -37,6 +37,30 @@ MVP は JSON-over-stdio。
 実装言語を問わず module を作れることを優先する。
 ```
 
+## HADO implementation language
+
+HADO core / CLI / gate evaluator をどの言語で実装するか。
+
+決定:
+
+```text
+MVP の HADO 本体は Go で実装する。
+```
+
+理由:
+
+- 単一バイナリとして配布しやすく、GitHub Actions やローカル CI で扱いやすい
+- CLI、設定ファイル読み込み、外部プロセス実行、JSON / YAML 処理との相性がよい
+- CI tool として起動が速く、利用者側に大きな runtime 前提を要求しにくい
+- `gobce` との親和性が高い一方で、HADO 本体と Go 専用 analyzer の責務は分離できる
+
+補足:
+
+```text
+Module は JSON-over-stdio contract を優先し、Go に限定しない。
+Datadog、Notion、Slack などの公式 module は、SDK や保守性に応じて Go / TypeScript などを選べる。
+```
+
 ## Score model
 
 Readiness score をどう計算するか。

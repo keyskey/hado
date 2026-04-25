@@ -48,6 +48,8 @@ hado
 
 ここでの名前は論理コンポーネント名である。実装初期は HADO 本体を単一リポジトリで進め、インターフェースが安定してから必要に応じて分割してよい。
 
+HADO core、CLI、gate evaluator の初期実装言語は Go とする。単一バイナリとして配布しやすく、GitHub Actions やローカル CI で起動しやすく、YAML / JSON 処理と外部 module 実行の実装をシンプルに保ちやすいためである。
+
 ただし、Go の C1 カバレッジ計測ツールである `gobce` は最初から別リポジトリとして開発する。HADO からは外部 analyzer module として利用する。
 
 ## 初期ターゲット統合
@@ -87,6 +89,7 @@ HADO 本体リポジトリは、将来的に次の形へ育てる。
 .
 ├── cmd
 │   └── hado
+│       └── Go CLI entrypoint
 │
 ├── internal
 │   ├── manifest
