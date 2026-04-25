@@ -83,10 +83,12 @@ JavaScript / TypeScript
 
 ## 想定リポジトリ構成
 
-HADO 本体リポジトリは、将来的に次の形へ育てる。
+HADO 本体リポジトリは、root に `go.mod` を置く単一 Go module として開始し、将来的に次の形へ育てる。
 
 ```text
 .
+├── go.mod
+│
 ├── cmd
 │   └── hado
 │       └── Go CLI entrypoint
