@@ -1,0 +1,18 @@
+---
+extends: default
+
+ignore: |
+  .git/
+  node_modules/
+  .tools/
+
+rules:
+  document-start: disable
+  line-length: disable
+  truthy:
+    allowed-values:
+      - "true"
+      - "false"
+      - "on"
+      - "off"
+    check-keys: false

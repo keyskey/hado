@@ -1,0 +1,13 @@
+# Go build artifacts
+/bin/
+/dist/
+*.test
+coverage.out
+
+# Local toolchains
+/.tools/
+
+# Local editor and OS files
+.DS_Store
+*.swp
+*.swo
