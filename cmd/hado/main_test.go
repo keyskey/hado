@@ -141,6 +141,88 @@ example.go:1.1,2.1 7 1
 	}
 }
 
+func TestEvaluateReadyWithManifestCoverageInputs(t *testing.T) {
+	dir := t.TempDir()
+	standardPath := writeFile(t, dir, "standard.yaml", `id: test
+gates:
+  - id: test.c0_coverage
+    required: true
+    threshold:
+      min: 70
+  - id: test.c1_coverage
+    required: true
+    threshold:
+      min: 65
+`)
+	writeFile(t, dir, "coverage-metrics.json", `{
+  "c0Coverage": 70,
+  "c1Coverage": 68.4
+}`)
+	manifestPath := writeFile(t, dir, "hado.yaml", `version: v1
+evidence:
+  coverage:
+    inputs:
+      - adapter: hado-json
+        path: coverage-metrics.json
+`)
+
+	var stdout bytes.Buffer
+	var stderr bytes.Buffer
+	exitCode, err := run([]string{
+		"evaluate",
+		"--standard", standardPath,
+		"--manifest", manifestPath,
+	}, &stdout, &stderr)
+	if err != nil {
+		t.Fatalf("run evaluate: %v", err)
+	}
+	if exitCode != 0 {
+		t.Fatalf("exit code = %d, want 0", exitCode)
+	}
+	if !strings.Contains(stdout.String(), "HADO: READY") {
+		t.Fatalf("stdout = %q, want ready status", stdout.String())
+	}
+}
+
+func TestEvaluateCoverageInputOverridesManifest(t *testing.T) {
+	dir := t.TempDir()
+	standardPath := writeFile(t, dir, "standard.yaml", `id: test
+gates:
+  - id: test.c0_coverage
+    required: true
+    threshold:
+      min: 70
+`)
+	writeFile(t, dir, "manifest-coverage.json", `{
+  "c0Coverage": 10
+}`)
+	cliMetricsPath := writeFile(t, dir, "cli-coverage.json", `{
+  "c0Coverage": 70
+}`)
+	manifestPath := writeFile(t, dir, "hado.yaml", `version: v1
+evidence:
+  coverage:
+    inputs:
+      - adapter: hado-json
+        path: manifest-coverage.json
+`)
+
+	var stdout bytes.Buffer
+	var stderr bytes.Buffer
+	exitCode, err := run([]string{
+		"evaluate",
+		"--standard", standardPath,
+		"--manifest", manifestPath,
+		"--coverage-input", "hado-json:" + cliMetricsPath,
+	}, &stdout, &stderr)
+	if err != nil {
+		t.Fatalf("run evaluate: %v", err)
+	}
+	if exitCode != 0 {
+		t.Fatalf("exit code = %d, want 0", exitCode)
+	}
+}
+
 func TestEvaluateRequiresCoverageEvidence(t *testing.T) {
 	dir := t.TempDir()
 	standardPath := writeFile(t, dir, "standard.yaml", `id: test

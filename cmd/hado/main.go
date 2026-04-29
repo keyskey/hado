@@ -10,6 +10,7 @@ import (
 
 	"github.com/keyskey/hado/internal/coverage"
 	"github.com/keyskey/hado/internal/gate"
+	"github.com/keyskey/hado/internal/manifest"
 	"github.com/keyskey/hado/internal/standard"
 )
 
@@ -55,8 +56,9 @@ func runEvaluate(args []string, stdout, stderr io.Writer) (int, error) {
 	fs := flag.NewFlagSet("evaluate", flag.ContinueOnError)
 	fs.SetOutput(stderr)
 	standardPath := fs.String("standard", "", "path to readiness standard YAML")
+	manifestPath := fs.String("manifest", "", "path to HADO manifest YAML")
 	var coverageInputs stringList
-	fs.Var(&coverageInputs, "coverage-input", "coverage input as <adapter>:<path>; adapters: hado-json, go-coverprofile, gobce-json")
+	fs.Var(&coverageInputs, "coverage-input", "coverage input as <adapter>:<path>; overrides manifest coverage inputs when set; adapters: hado-json, go-coverprofile, gobce-json")
 	output := fs.String("output", "text", "output format: text or json")
 	if err := fs.Parse(args); err != nil {
 		return 2, err
@@ -64,15 +66,19 @@ func runEvaluate(args []string, stdout, stderr io.Writer) (int, error) {
 	if *standardPath == "" {
 		return 2, fmt.Errorf("evaluate requires --standard")
 	}
-	if len(coverageInputs) == 0 {
-		return 2, fmt.Errorf("evaluate requires --coverage-input")
-	}
 
 	readinessStandard, err := standard.Load(*standardPath)
 	if err != nil {
 		return 2, err
 	}
-	coverageMetrics, err := coverage.ParseCoverageSpecs(coverageInputs)
+	adapterInputs, err := resolveCoverageInputs(coverageInputs, *manifestPath)
+	if err != nil {
+		return 2, err
+	}
+	if len(adapterInputs) == 0 {
+		return 2, fmt.Errorf("evaluate requires --coverage-input or --manifest with evidence.coverage.inputs")
+	}
+	coverageMetrics, err := coverage.ParseAdapterInputs(adapterInputs)
 	if err != nil {
 		return 2, err
 	}
@@ -101,6 +107,29 @@ func runEvaluate(args []string, stdout, stderr io.Writer) (int, error) {
 		return 1, nil
 	}
 	return 0, nil
+}
+
+func resolveCoverageInputs(coverageInputs []string, manifestPath string) ([]coverage.AdapterInput, error) {
+	if len(coverageInputs) > 0 {
+		inputs := make([]coverage.AdapterInput, 0, len(coverageInputs))
+		for _, spec := range coverageInputs {
+			input, err := coverage.ParseCoverageSpec(spec)
+			if err != nil {
+				return nil, err
+			}
+			inputs = append(inputs, input)
+		}
+		return inputs, nil
+	}
+	if manifestPath == "" {
+		return nil, nil
+	}
+
+	hadoManifest, err := manifest.Load(manifestPath)
+	if err != nil {
+		return nil, err
+	}
+	return hadoManifest.CoverageAdapterInputs(), nil
 }
 
 func printTextEvaluation(stdout io.Writer, evaluation gate.Evaluation) {
