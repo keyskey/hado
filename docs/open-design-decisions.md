@@ -216,6 +216,14 @@ C0 / C1 coverage は producer-neutral な metric として扱う。
 HADO core は gobce / gobco / JaCoCo / lcov / Istanbul などの計測器や、
 推定値 / 実測値の違いを判定しない。
 producer-specific artifact は adapter が HADO の normalized coverage metrics へ変換する。
+
+HADO Manifest は coverage evidence を `evidence.coverage.inputs` で宣言する。
+各 input は `adapter` と `path` を持ち、相対 path は manifest file の directory
+から解決する。
+
+`hado evaluate` は `--manifest hado.yaml` から coverage input を読める。
+`--coverage-input` が指定された場合は direct CLI override として扱い、
+manifest の coverage input より優先する。
 ```
 
 未決:
@@ -240,10 +248,10 @@ producer-specific artifact は adapter が HADO の normalized coverage metrics 
   - `keyskey/gobce` は pre-1.0 で JSON output が変わる可能性がある
   - adapter が producer version を検出するか
   - adapter version と producer version の compatibility をどう表現するか
-- HADO Manifest から coverage input / adapter を宣言する schema
-  - CLI flag と manifest 宣言の優先順位
+- HADO Manifest の coverage input 宣言を将来拡張する schema
   - CI matrix / monorepo で複数 coverage artifact を扱う表現
   - language autodetection を許可するか
+  - input ごとの include / exclude / scope をどう表現するか
 - adapter warning / recommendation を report に含める形式
   - generated code の除外漏れ
   - unsupported coverage feature
