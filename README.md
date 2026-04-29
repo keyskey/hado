@@ -47,9 +47,18 @@ HADO core は Go、Java、TypeScript などの言語や coverage tool 固有の
 ```bash
 printf '{"c0Coverage": 82.1, "c1Coverage": 72.5}\n' > coverage-metrics.json
 
+cat > hado.yaml <<'YAML'
+version: v1
+evidence:
+  coverage:
+    inputs:
+      - adapter: hado-json
+        path: coverage-metrics.json
+YAML
+
 ./bin/hado evaluate \
   --standard standards/web-service.yaml \
-  --coverage-input hado-json:coverage-metrics.json
+  --manifest hado.yaml
 ```
 
 Go coverprofile や `keyskey/gobce` の JSON output も adapter 経由で扱えます。
@@ -63,3 +72,6 @@ gobce analyze --coverprofile coverage.out --format json --output gobce.json
   --coverage-input go-coverprofile:coverage.out \
   --coverage-input gobce-json:gobce.json
 ```
+
+`--coverage-input` は従来どおり直接指定にも使え、指定された場合は
+manifest の `evidence.coverage.inputs` より優先されます。
