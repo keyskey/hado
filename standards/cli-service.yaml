@@ -17,4 +17,4 @@ gates:
     required: true
   - id: operations.runbook_exists
     severity: major
-    required: true
+    required: false

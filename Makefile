@@ -1,7 +1,12 @@
-.PHONY: help setup build check-docker lint lint-go lint-yaml lint-markdown fmt fmt-go fmt-check test ci
+.PHONY: help setup build check-docker lint lint-go lint-yaml lint-markdown fmt fmt-go fmt-check test readiness-check ci
 
 GO_FILES := $(shell git ls-files '*.go')
 BINARY := bin/hado
+COVERPROFILE ?= coverage.out
+GOBCE ?= gobce
+READINESS_COVERAGE ?= hado-coverage.json
+READINESS_MANIFEST ?= hado.yaml
+READINESS_STANDARD ?= standards/cli-service.yaml
 
 help:
 	@echo "Available targets:"
@@ -11,6 +16,7 @@ help:
 	@echo "  make fmt          # Format Go source files"
 	@echo "  make fmt-check    # Check Go formatting (CI equivalent)"
 	@echo "  make test         # Run Go tests"
+	@echo "  make readiness-check # Generate HADO coverage evidence and evaluate readiness"
 	@echo "  make ci           # Run fmt-check, lint, and test"
 
 setup:
@@ -55,5 +61,11 @@ fmt-check:
 
 test:
 	go test ./...
+
+readiness-check:
+	@command -v "$(GOBCE)" >/dev/null 2>&1 || { echo "gobce is required. Install it with: go install github.com/keyskey/gobce/cmd/gobce@latest"; exit 1; }
+	go test ./... -coverprofile="$(COVERPROFILE)"
+	"$(GOBCE)" analyze --coverprofile "$(COVERPROFILE)" --format json --output "$(READINESS_COVERAGE)"
+	go run ./cmd/hado evaluate --standard "$(READINESS_STANDARD)" --manifest "$(READINESS_MANIFEST)"
 
 ci: fmt-check lint test
