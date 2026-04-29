@@ -87,3 +87,27 @@ gates:
 		t.Fatal("loaded standard should require operations runbook gate")
 	}
 }
+
+func TestLoadCLIServiceStandard(t *testing.T) {
+	t.Parallel()
+
+	loaded, err := Load("../../standards/cli-service.yaml")
+	if err != nil {
+		t.Fatalf("Load() error = %v", err)
+	}
+	if loaded.ID != "cli-service" {
+		t.Fatalf("ID = %q, want cli-service", loaded.ID)
+	}
+	if !loaded.RequiresGate(C0CoverageGateID) {
+		t.Fatal("cli-service standard should require C0 coverage gate")
+	}
+	if !loaded.RequiresGate(C1CoverageGateID) {
+		t.Fatal("cli-service standard should require C1 coverage gate")
+	}
+	if !loaded.RequiresGate(OperationsOwnerExistsGateID) {
+		t.Fatal("cli-service standard should require operations owner gate")
+	}
+	if !loaded.RequiresGate(OperationsRunbookExistsGateID) {
+		t.Fatal("cli-service standard should require operations runbook gate")
+	}
+}

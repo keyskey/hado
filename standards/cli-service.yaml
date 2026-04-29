@@ -1,0 +1,20 @@
+---
+id: cli-service
+name: CLI Service
+gates:
+  - id: test.c0_coverage
+    severity: major
+    required: true
+    threshold:
+      min: 60
+  - id: test.c1_coverage
+    severity: major
+    required: true
+    threshold:
+      min: 40
+  - id: operations.owner_exists
+    severity: critical
+    required: true
+  - id: operations.runbook_exists
+    severity: major
+    required: true

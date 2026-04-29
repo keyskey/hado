@@ -67,6 +67,30 @@ evidence:
 	}
 }
 
+func TestLoadProjectManifest(t *testing.T) {
+	hadoManifest, err := Load(filepath.Join("..", "..", "hado.yaml"))
+	if err != nil {
+		t.Fatalf("Load() error = %v", err)
+	}
+
+	inputs := hadoManifest.CoverageAdapterInputs()
+	if len(inputs) != 1 {
+		t.Fatalf("len(inputs) = %d, want 1", len(inputs))
+	}
+	if inputs[0].Format != coverage.FormatHADOJSON {
+		t.Fatalf("coverage input format = %q, want %q", inputs[0].Format, coverage.FormatHADOJSON)
+	}
+	if _, err := os.Stat(inputs[0].Path); err != nil {
+		t.Fatalf("coverage input path should exist: %v", err)
+	}
+	if hadoManifest.Evidence.Operations.Owner != "keyskey" {
+		t.Fatalf("operations owner = %q, want keyskey", hadoManifest.Evidence.Operations.Owner)
+	}
+	if hadoManifest.Evidence.Operations.Runbook != "" {
+		t.Fatalf("operations runbook = %q, want empty", hadoManifest.Evidence.Operations.Runbook)
+	}
+}
+
 func TestLoadRejectsCoverageInputWithoutAdapter(t *testing.T) {
 	manifestPath := filepath.Join(t.TempDir(), "hado.yaml")
 	if err := os.WriteFile(manifestPath, []byte(`evidence:
