@@ -23,6 +23,8 @@ const (
 type Metrics struct {
 	C0CoveragePercent *float64
 	C1CoveragePercent *float64
+	OperationsOwner   string
+	OperationsRunbook string
 }
 
 // Result captures a single gate evaluation.
@@ -66,6 +68,18 @@ func Evaluate(s standard.Standard, metrics Metrics) (Evaluation, error) {
 			if gate.Required && !result.Passed {
 				evaluation.Status = DecisionBlocked
 			}
+		case standard.OperationsOwnerExistsGateID:
+			result := evaluateExistsGate(gate, metrics.OperationsOwner != "", "Operations owner is defined.", "Operations owner is not defined.")
+			evaluation.Results = append(evaluation.Results, result)
+			if gate.Required && !result.Passed {
+				evaluation.Status = DecisionBlocked
+			}
+		case standard.OperationsRunbookExistsGateID:
+			result := evaluateExistsGate(gate, metrics.OperationsRunbook != "", "Operations runbook is defined.", "Operations runbook is not defined.")
+			evaluation.Results = append(evaluation.Results, result)
+			if gate.Required && !result.Passed {
+				evaluation.Status = DecisionBlocked
+			}
 		default:
 			if gate.Required {
 				return Evaluation{Status: DecisionError}, fmt.Errorf("unsupported required gate %q", gate.ID)
@@ -92,5 +106,21 @@ func evaluateCoverageGate(gate standard.Gate, label string, actual float64) Resu
 	}
 
 	result.Message = fmt.Sprintf("%s is %.1f%%, below the required %.1f%%.", label, actual, requiredMin)
+	return result
+}
+
+func evaluateExistsGate(gate standard.Gate, exists bool, passedMessage, failedMessage string) Result {
+	result := Result{
+		ID:       gate.ID,
+		Required: gate.Required,
+		Severity: gate.Severity,
+		Passed:   exists,
+	}
+	if exists {
+		result.Message = passedMessage
+		return result
+	}
+
+	result.Message = failedMessage
 	return result
 }

@@ -1,0 +1,9 @@
+version: v1
+evidence:
+  coverage:
+    inputs:
+      - adapter: hado-json
+        path: hado-coverage.json
+  operations:
+    owner: keyskey
+    runbook: ""

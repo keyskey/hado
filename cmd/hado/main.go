@@ -71,20 +71,30 @@ func runEvaluate(args []string, stdout, stderr io.Writer) (int, error) {
 	if err != nil {
 		return 2, err
 	}
-	adapterInputs, err := resolveCoverageInputs(coverageInputs, *manifestPath)
+
+	hadoManifest, err := loadManifest(*manifestPath)
 	if err != nil {
 		return 2, err
 	}
-	if len(adapterInputs) == 0 {
+	adapterInputs, err := resolveCoverageInputs(coverageInputs, hadoManifest)
+	if err != nil {
+		return 2, err
+	}
+	if requiresCoverage(readinessStandard) && len(adapterInputs) == 0 {
 		return 2, fmt.Errorf("evaluate requires --coverage-input or --manifest with evidence.coverage.inputs")
 	}
-	coverageMetrics, err := coverage.ParseAdapterInputs(adapterInputs)
-	if err != nil {
-		return 2, err
+	metrics := gate.Metrics{}
+	if len(adapterInputs) > 0 {
+		coverageMetrics, err := coverage.ParseAdapterInputs(adapterInputs)
+		if err != nil {
+			return 2, err
+		}
+		metrics.C0CoveragePercent = coverageMetrics.C0Coverage
+		metrics.C1CoveragePercent = coverageMetrics.C1Coverage
 	}
-	metrics := gate.Metrics{
-		C0CoveragePercent: coverageMetrics.C0Coverage,
-		C1CoveragePercent: coverageMetrics.C1Coverage,
+	if hadoManifest != nil {
+		metrics.OperationsOwner = strings.TrimSpace(hadoManifest.Evidence.Operations.Owner)
+		metrics.OperationsRunbook = strings.TrimSpace(hadoManifest.Evidence.Operations.Runbook)
 	}
 
 	evaluation, err := gate.Evaluate(readinessStandard, metrics)
@@ -109,7 +119,19 @@ func runEvaluate(args []string, stdout, stderr io.Writer) (int, error) {
 	return 0, nil
 }
 
-func resolveCoverageInputs(coverageInputs []string, manifestPath string) ([]coverage.AdapterInput, error) {
+func loadManifest(manifestPath string) (*manifest.Manifest, error) {
+	if manifestPath == "" {
+		return nil, nil
+	}
+
+	hadoManifest, err := manifest.Load(manifestPath)
+	if err != nil {
+		return nil, err
+	}
+	return &hadoManifest, nil
+}
+
+func resolveCoverageInputs(coverageInputs []string, hadoManifest *manifest.Manifest) ([]coverage.AdapterInput, error) {
 	if len(coverageInputs) > 0 {
 		inputs := make([]coverage.AdapterInput, 0, len(coverageInputs))
 		for _, spec := range coverageInputs {
@@ -121,15 +143,15 @@ func resolveCoverageInputs(coverageInputs []string, manifestPath string) ([]cove
 		}
 		return inputs, nil
 	}
-	if manifestPath == "" {
+	if hadoManifest == nil {
 		return nil, nil
 	}
 
-	hadoManifest, err := manifest.Load(manifestPath)
-	if err != nil {
-		return nil, err
-	}
 	return hadoManifest.CoverageAdapterInputs(), nil
+}
+
+func requiresCoverage(readinessStandard standard.Standard) bool {
+	return readinessStandard.RequiresGate(standard.C0CoverageGateID) || readinessStandard.RequiresGate(standard.C1CoverageGateID)
 }
 
 func printTextEvaluation(stdout io.Writer, evaluation gate.Evaluation) {

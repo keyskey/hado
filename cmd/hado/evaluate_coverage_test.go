@@ -2,8 +2,6 @@ package main
 
 import (
 	"bytes"
-	"os"
-	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -274,14 +272,4 @@ example.go:3.1,4.1 3 0
 	if !strings.Contains(stdout.String(), "HADO: BLOCKED") {
 		t.Fatalf("stdout = %q, want blocked status", stdout.String())
 	}
-}
-
-func writeFile(t *testing.T, dir, name, content string) string {
-	t.Helper()
-
-	path := filepath.Join(dir, name)
-	if err := os.WriteFile(path, []byte(content), 0o600); err != nil {
-		t.Fatalf("write %s: %v", name, err)
-	}
-	return path
 }

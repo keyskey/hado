@@ -13,6 +13,10 @@ const (
 	C0CoverageGateID = "test.c0_coverage"
 	// C1CoverageGateID is the gate id used for C1 condition coverage.
 	C1CoverageGateID = "test.c1_coverage"
+	// OperationsOwnerExistsGateID is the gate id used for operational owner readiness.
+	OperationsOwnerExistsGateID = "operations.owner_exists"
+	// OperationsRunbookExistsGateID is the gate id used for operational runbook readiness.
+	OperationsRunbookExistsGateID = "operations.runbook_exists"
 )
 
 // Standard defines the production readiness gates a service must satisfy.
