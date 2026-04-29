@@ -77,11 +77,11 @@ func TestLoadProjectManifest(t *testing.T) {
 	if len(inputs) != 1 {
 		t.Fatalf("len(inputs) = %d, want 1", len(inputs))
 	}
-	if inputs[0].Format != coverage.FormatHADOJSON {
-		t.Fatalf("coverage input format = %q, want %q", inputs[0].Format, coverage.FormatHADOJSON)
+	if inputs[0].Format != coverage.FormatGobceJSON {
+		t.Fatalf("coverage input format = %q, want %q", inputs[0].Format, coverage.FormatGobceJSON)
 	}
-	if _, err := os.Stat(inputs[0].Path); err != nil {
-		t.Fatalf("coverage input path should exist: %v", err)
+	if filepath.Base(inputs[0].Path) != "hado-coverage.json" {
+		t.Fatalf("coverage input path = %q, want hado-coverage.json", inputs[0].Path)
 	}
 	if hadoManifest.Evidence.Operations.Owner != "keyskey" {
 		t.Fatalf("operations owner = %q, want keyskey", hadoManifest.Evidence.Operations.Owner)

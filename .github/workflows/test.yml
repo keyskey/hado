@@ -22,5 +22,8 @@ jobs:
           go-version-file: go.mod
           cache: true
 
-      - name: Test Go
-        run: make test
+      - name: Set up development tools
+        run: make setup
+
+      - name: Check HADO readiness
+        run: make readiness-check

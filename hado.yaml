@@ -2,7 +2,7 @@ version: v1
 evidence:
   coverage:
     inputs:
-      - adapter: hado-json
+      - adapter: gobce-json
         path: hado-coverage.json
   operations:
     owner: keyskey
