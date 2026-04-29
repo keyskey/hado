@@ -13,6 +13,32 @@ Go service + GitHub Actions + Datadog + Notion + Slack + hado.yaml + critical-ap
 
 この workflow が、明確な理由と次の行動を伴う ready / blocked 判定を返せるなら、HADO は observability、operations、security、compliance、regulated-system readiness へ広げるだけの重力を持つ。
 
+## Initial Readiness Expansion Order
+
+初期の readiness 対応は、実際の新サービスリリースでよく起きる順序に合わせる。
+
+```text
+QAする -> 運用ルールを決める -> 監視を用意する
+```
+
+HADO の gate 展開もこの順序に寄せる。
+
+1. Coverage Readiness
+   - `test.c0_coverage`
+   - `test.c1_coverage`
+   - QA と test confidence を最初に確認する。
+
+2. Operation Readiness
+   - `operations.owner_exists`
+   - `operations.runbook_exists`
+   - 本番運用の責任者と障害対応の入口を確認する。
+
+3. Observability Readiness
+   - `observability.slo_exists`
+   - `observability.monitor_exists`
+   - `observability.dashboard_exists`
+   - 本番投入後に異常を検知し、利用者影響を追える状態かを確認する。
+
 ## MVP Scope
 
 最初の実用ターゲットはこれ。
@@ -114,11 +140,11 @@ Deliverables:
 ```text
 test.c0_coverage
 test.c1_coverage
+operations.owner_exists
+operations.runbook_exists
 observability.slo_exists
 observability.monitor_exists
 observability.dashboard_exists
-operations.runbook_exists
-operations.owner_exists
 release.rollback_plan_exists
 ```
 

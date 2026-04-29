@@ -19,7 +19,8 @@ type Manifest struct {
 
 // Evidence groups evidence declarations by readiness domain.
 type Evidence struct {
-	Coverage CoverageEvidence `yaml:"coverage" json:"coverage,omitempty"`
+	Coverage   CoverageEvidence   `yaml:"coverage" json:"coverage,omitempty"`
+	Operations OperationsEvidence `yaml:"operations" json:"operations,omitempty"`
 }
 
 // CoverageEvidence declares coverage reports and the adapters that parse them.
@@ -31,6 +32,12 @@ type CoverageEvidence struct {
 type CoverageInput struct {
 	Adapter string `yaml:"adapter" json:"adapter"`
 	Path    string `yaml:"path" json:"path"`
+}
+
+// OperationsEvidence declares operational ownership and response evidence.
+type OperationsEvidence struct {
+	Owner   string `yaml:"owner" json:"owner,omitempty"`
+	Runbook string `yaml:"runbook" json:"runbook,omitempty"`
 }
 
 // Load reads a HADO manifest from disk.

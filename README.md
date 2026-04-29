@@ -33,9 +33,9 @@ make build
 ./bin/hado
 ```
 
-## Evaluate coverage readiness
+## Evaluate readiness
 
-`hado evaluate` は coverage evidence を adapter で正規化し、
+`hado evaluate` は coverage evidence と operation evidence を正規化し、
 Readiness Standard と照合します。required gate を満たしていれば `READY`、
 満たしていなければ `BLOCKED` を返します。`BLOCKED` の場合は CI で
 扱いやすいように exit code 1 で終了します。
@@ -54,6 +54,9 @@ evidence:
     inputs:
       - adapter: hado-json
         path: coverage-metrics.json
+  operations:
+    owner: platform-team
+    runbook: https://example.com/runbooks/order-api
 YAML
 
 ./bin/hado evaluate \
@@ -69,6 +72,7 @@ gobce analyze --coverprofile coverage.out --format json --output gobce.json
 
 ./bin/hado evaluate \
   --standard standards/web-service.yaml \
+  --manifest hado.yaml \
   --coverage-input go-coverprofile:coverage.out \
   --coverage-input gobce-json:gobce.json
 ```

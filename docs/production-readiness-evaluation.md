@@ -50,6 +50,33 @@ Release readiness
   post-release validation
 ```
 
+## 初期展開順序
+
+HADO の初期 gate は、実際の新サービスリリースでよく発生する
+「QA する → 運用ルールを決める → 監視を用意する」という順序に合わせて広げる。
+
+```text
+1. Coverage Readiness
+   QA と test confidence のための最初の判定。
+   test.c0_coverage
+   test.c1_coverage
+
+2. Operation Readiness
+   本番で誰が責任を持ち、障害時にどの手順で動くかを確認する。
+   operations.owner_exists
+   operations.runbook_exists
+
+3. Observability Readiness
+   本番後に異常や顧客影響を検知できる状態かを確認する。
+   observability.slo_exists
+   observability.monitor_exists
+   observability.dashboard_exists
+```
+
+この順序により、HADO はまず「テストで最低限の自信があるか」を確認し、
+次に「運用責任と復旧手順があるか」を確認し、その後に
+「本番で異常を検知できるか」へ判定範囲を広げる。
+
 ## Evidence
 
 Evidence は、gate 評価に使う証拠である。

@@ -12,3 +12,9 @@ gates:
     required: true
     threshold:
       min: 70
+  - id: operations.owner_exists
+    severity: critical
+    required: true
+  - id: operations.runbook_exists
+    severity: critical
+    required: true
