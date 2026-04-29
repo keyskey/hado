@@ -35,14 +35,19 @@ make build
 
 ## Evaluate readiness
 
-`hado evaluate` は coverage evidence と operation evidence を正規化し、
-Readiness Standard と照合します。required gate を満たしていれば `READY`、
-満たしていなければ `BLOCKED` を返します。`BLOCKED` の場合は CI で
-扱いやすいように exit code 1 で終了します。
+`hado evaluate` は、Manifest や CLI option で渡された evidence を
+Readiness Standard の gate と照合し、required gate を満たしていれば
+`READY`、満たしていなければ `BLOCKED` を返します。`BLOCKED` の場合は
+CI で扱いやすいように exit code 1 で終了します。
 
-HADO core は Go、Java、TypeScript などの言語や coverage tool 固有の
-フォーマットに直接依存しません。adapter が各 tool の出力を
-`c0Coverage` / `c1Coverage` に正規化します。
+HADO core は、特定の runtime、tool、SaaS、infrastructure provider の
+フォーマットに直接依存しません。Coverage、Operation、Observability、
+Infrastructure、Application、Security などの readiness domain は、
+adapter や module が evidence を正規化し、standard の gate が判定します。
+
+現在の最小 evaluator は coverage evidence と operation evidence に対応しています。
+Coverage tool 固有の出力は adapter が `c0Coverage` / `c1Coverage` に正規化し、
+operation evidence は Manifest の owner / runbook を使って判定します。
 
 ```bash
 printf '{"c0Coverage": 82.1, "c1Coverage": 72.5}\n' > coverage-metrics.json
