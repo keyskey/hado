@@ -354,6 +354,8 @@ hado evaluate \
 などの adapter を追加して同じ metric に変換する。標準側の gate ID は
 言語や tool に依存せず、`test.c0_coverage` / `test.c1_coverage` のままにする。
 
+Adapter contract の未決事項は [未解決課題](open-design-decisions.md) で管理する。
+
 ### Module Manifest
 
 ```yaml
