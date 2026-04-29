@@ -26,9 +26,9 @@ MVP に含めるもの:
 - HADO Manifest loader
 - Readiness Standard loader
 - module runner
-- `gobce` integration
-- statement coverage gate
-- estimated C1 gate
+- coverage adapter layer
+- C0 coverage gate
+- C1 gate
 - SLO existence gate
 - monitor existence gate
 - runbook existence gate
@@ -64,19 +64,19 @@ MVP に含めないもの:
 - example Readiness Standard
 - example report
 
-## Phase 1: gobce
+## Phase 1: C1 coverage producers
 
 目的:
 
 ```text
-estimated C1 coverage を HADO 最初の差別化シグナルにする。
+C1 coverage を HADO 最初の差別化シグナルにする。
 ```
 
 重要な前提:
 
 ```text
-gobce は最初から別リポジトリとして開発する。
-HADO 本体からは analyzer module として利用する。
+HADO core は C1 coverage の producer に依存しない。
+gobce は最初の producer 候補だが、gobco などの実測 producer も同じ metric として扱う。
 ```
 
 Deliverables:
@@ -112,8 +112,8 @@ Deliverables:
 初期 gate:
 
 ```text
-test.statement_coverage
-test.estimated_c1
+test.c0_coverage
+test.c1_coverage
 observability.slo_exists
 observability.monitor_exists
 observability.dashboard_exists

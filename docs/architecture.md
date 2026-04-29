@@ -173,7 +173,7 @@ Module
   evidence を収集・解析・報告する拡張単位。
 
 Gate
-  リリース基準。例: test.estimated_c1, observability.slo_exists,
+  リリース基準。例: test.c1_coverage, observability.slo_exists,
   operations.runbook_exists, release.rollback_plan_exists。
 
 Evidence
@@ -250,13 +250,13 @@ description: Critical API services must satisfy this minimum production readines
 required_score: 85
 
 gates:
-  - id: test.statement_coverage
+  - id: test.c0_coverage
     severity: major
     required: true
     threshold:
       min: 80
 
-  - id: test.estimated_c1
+  - id: test.c1_coverage
     severity: major
     required: true
     threshold:
@@ -283,6 +283,12 @@ gates:
 
 Module は HADO を language-agnostic / vendor-neutral に保つための拡張点である。
 
+Coverage は特に producer ごとの差が大きい。Go の coverprofile、keyskey/gobce
+JSON、JaCoCo XML、lcov、Istanbul JSON などを HADO core が直接 gate として
+解釈するのではなく、adapter が `test.c0_coverage` / `test.c1_coverage` の
+正規化済み metric に変換する。HADO core は言語、ライブラリ、推定値か実測値か
+を判定せず、Readiness Standard の threshold と正規化済み metric だけを照合する。
+
 ### Module 種別
 
 ```text
@@ -292,7 +298,7 @@ evidence collector
 
 analyzer
   コードや成果物を解析し、metric と finding を出す。
-  例: gobce, SBOM parser, OpenAPI checker
+  例: gobce, gobco, SBOM parser, OpenAPI checker
 
 policy pack
   gate や standard fragment、規制業界向けルールを追加する。
@@ -317,6 +323,37 @@ HADO が timeout, exit code, schema validation を管理する
 
 これにより、Go、TypeScript、Python、Rust など、どのランタイムでも module を書きやすくなる。将来的に性能や streaming が必要になったら、gRPC や WASM に移行できる。
 
+### Coverage adapter contract
+
+Coverage adapter は、各言語・各ツールの coverage artifact を HADO の
+正規化 coverage metric へ変換する境界である。HADO core の gate evaluator は
+JaCoCo、lcov、Istanbul、gobce、gobco などの producer-specific schema を直接扱わない。
+
+初期 CLI では次の形式で adapter と artifact を指定する。
+
+```bash
+hado evaluate \
+  --standard standards/web-service.yaml \
+  --coverage-input hado-json:coverage-metrics.json
+
+hado evaluate \
+  --standard standards/web-service.yaml \
+  --coverage-input gobce-json:gobce.json
+```
+
+正規化後の metric は C0 / C1 の coverage percentage である。
+
+```json
+{
+  "c0Coverage": 82.1,
+  "c1Coverage": 68.4
+}
+```
+
+今後の Java / TypeScript 対応は、`jacoco-xml`、`lcov`、`istanbul-json`
+などの adapter を追加して同じ metric に変換する。標準側の gate ID は
+言語や tool に依存せず、`test.c0_coverage` / `test.c1_coverage` のままにする。
+
 ### Module Manifest
 
 ```yaml
@@ -337,8 +374,8 @@ runtime:
 capabilities:
   emits:
     metrics:
-      - test.statement_coverage
-      - test.estimated_c1
+      - test.c0_coverage
+      - test.c1_coverage
     findings:
       - test.uncovered_branch
 
@@ -385,12 +422,12 @@ evidence:
   },
   "metrics": [
     {
-      "id": "test.statement_coverage",
+      "id": "test.c0_coverage",
       "value": 82.1,
       "unit": "percent"
     },
     {
-      "id": "test.estimated_c1",
+      "id": "test.c1_coverage",
       "value": 68.4,
       "unit": "percent"
     }

@@ -207,19 +207,19 @@ Readiness Target
 - SARIF 互換を持たせるか
 - AI agent 向け report format を別に持つか
 
-## gobce integration
+## C1 coverage integration
 
 決定済み:
 
 ```text
-gobce は別リポジトリとして開発する。
-HADO とは analyzer module として連携する。
+C1 coverage は producer-neutral な metric として扱う。
+HADO core は gobce / gobco などの計測器や、推定値 / 実測値の違いを判定しない。
+producer は HADO が読む前に `test.c1_coverage` / `c1Coverage` へ正規化する。
 ```
 
 未決:
 
-- HADO module mode の CLI サブコマンド名
-- `estimatedBranchCoverage` と `test.estimated_c1` の正確な metric naming
+- producer が HADO module として動く場合の CLI サブコマンド名
 - coverprofile と source path の解決方法
 - generated code の除外ルール
 - monorepo 内 Go module の扱い
