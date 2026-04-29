@@ -22,10 +22,8 @@ jobs:
           go-version-file: go.mod
           cache: true
 
-      - name: Install gobce
-        run: |
-          go install github.com/keyskey/gobce/cmd/gobce@latest
-          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+      - name: Set up development tools
+        run: make setup
 
       - name: Check HADO readiness
         run: make readiness-check

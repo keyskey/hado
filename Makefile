@@ -2,15 +2,17 @@
 
 GO_FILES := $(shell git ls-files '*.go')
 BINARY := bin/hado
+GO_BIN := $(shell go env GOPATH 2>/dev/null)/bin
 COVERPROFILE ?= coverage.out
-GOBCE ?= gobce
+GOBCE ?= $(GO_BIN)/gobce
+GOBCE_PACKAGE ?= github.com/keyskey/gobce/cmd/gobce@latest
 READINESS_COVERAGE ?= hado-coverage.json
 READINESS_MANIFEST ?= hado.yaml
 READINESS_STANDARD ?= standards/cli-service.yaml
 
 help:
 	@echo "Available targets:"
-	@echo "  make setup        # Verify local Go toolchain"
+	@echo "  make setup        # Verify Go and install development tools"
 	@echo "  make build        # Build hado CLI binary"
 	@echo "  make lint         # Run YAML, Markdown, and Go lint checks"
 	@echo "  make fmt          # Format Go source files"
@@ -22,6 +24,11 @@ help:
 setup:
 	@command -v go >/dev/null 2>&1 || { echo "go is required."; exit 1; }
 	@echo "Go toolchain is available."
+	go install "$(GOBCE_PACKAGE)"
+	@if [ -n "$${GITHUB_PATH:-}" ]; then \
+		echo "$(GO_BIN)" >> "$$GITHUB_PATH"; \
+	fi
+	@echo "gobce is installed at $(GOBCE)."
 
 build:
 	@mkdir -p bin
@@ -63,7 +70,7 @@ test:
 	go test ./...
 
 readiness-check:
-	@command -v "$(GOBCE)" >/dev/null 2>&1 || { echo "gobce is required. Install it with: go install github.com/keyskey/gobce/cmd/gobce@latest"; exit 1; }
+	@command -v "$(GOBCE)" >/dev/null 2>&1 || { echo "gobce is required. Run: make setup"; exit 1; }
 	go test ./... -coverprofile="$(COVERPROFILE)"
 	"$(GOBCE)" analyze --coverprofile "$(COVERPROFILE)" --format json --output "$(READINESS_COVERAGE)"
 	go run ./cmd/hado evaluate --standard "$(READINESS_STANDARD)" --manifest "$(READINESS_MANIFEST)"
