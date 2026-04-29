@@ -19,13 +19,13 @@ HADO とは module execution contract で連携する。
 
 ## 目的
 
-Go 標準の coverage は `go test -coverprofile` による statement/block coverage を提供する。しかし、Production Readiness の観点では「分岐がどれだけテストされているか」というより強いシグナルが欲しい。
+Go 標準の coverage は `go test -coverprofile` による C0/block coverage を提供する。しかし、Production Readiness の観点では「分岐がどれだけテストされているか」というより強いシグナルが欲しい。
 
 `gobce` は Go の coverprofile と AST / 軽量 CFG 解析を組み合わせ、C1 branch coverage を推定する。
 
 ```text
 go test -coverprofile + Go AST/CFG analysis
-  -> estimated branch coverage
+  -> C1 coverage
   -> uncovered branch findings
   -> HADO readiness metrics
 ```
@@ -59,12 +59,24 @@ gobce analyze \
 
 ## HADO 連携
 
-`gobce` は HADO analyzer module として次を出す。
+`gobce` は C1 coverage producer の一例である。HADO core は `gobce` 固有の
+JSON schema や、その値が推定値か実測値かを解釈しない。HADO に渡す前に、
+producer や adapter が正規化済み coverage metrics に変換する。
+
+HADO の `gobce-json` adapter は、2026-04 時点の `keyskey/gobce` main branch
+で確認した JSON output を次のように正規化する。
+
+```text
+statementCoverage       -> c0Coverage
+estimatedBranchCoverage -> c1Coverage
+```
+
+`gobce` を HADO analyzer module として使う場合は次を出す。
 
 ```text
 metrics:
-  test.statement_coverage
-  test.estimated_c1
+  test.c0_coverage
+  test.c1_coverage
 
 findings:
   test.uncovered_branch
@@ -74,12 +86,12 @@ Readiness Standard 側では、この metric を gate に使う。
 
 ```yaml
 gates:
-  - id: test.statement_coverage
+  - id: test.c0_coverage
     required: true
     threshold:
       min: 80
 
-  - id: test.estimated_c1
+  - id: test.c1_coverage
     required: true
     threshold:
       min: 70
@@ -116,20 +128,21 @@ generated-code filtering improvements
 3. 対応構文から branch candidate span を作る。
 4. coverage block と branch candidate span を対応付ける。
 5. 各 branch side が実行されたかを推定する。
-6. estimated C1 percentage を計算する。
+6. C1 percentage を計算する。
 7. file, line, kind, recommendation 付きの uncovered branch finding を出す。
 ```
 
 ## 重要な制約
 
-最初のバージョンでは、結果を exact C1 ではなく estimated C1 と呼ぶ。Go の coverprofile は branch coverage 専用フォーマットではないため、シグナルの性質を正直に表現する。
+`gobce` の最初のバージョンでは、結果は実測値ではなく推定値である。Go の coverprofile は branch coverage 専用フォーマットではないため、シグナルの性質を正直に表現する。
 
 ```text
-statement coverage = measured
-estimated C1       = inferred from coverprofile + source analysis
+C0 coverage = measured
+gobce C1 coverage = inferred from coverprofile + source analysis
 ```
 
-この正直さは、HADO と `gobce` の信頼性そのものに関わる。
+この正直さは `gobce` の信頼性そのものに関わる。一方、HADO core の
+`test.c1_coverage` gate は正規化された C1 coverage value だけを見る。
 
 ## 別リポジトリにする理由
 

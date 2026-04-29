@@ -32,3 +32,34 @@ make build
 ./bin/hado version
 ./bin/hado
 ```
+
+## Evaluate coverage readiness
+
+`hado evaluate` は coverage evidence を adapter で正規化し、
+Readiness Standard と照合します。required gate を満たしていれば `READY`、
+満たしていなければ `BLOCKED` を返します。`BLOCKED` の場合は CI で
+扱いやすいように exit code 1 で終了します。
+
+HADO core は Go、Java、TypeScript などの言語や coverage tool 固有の
+フォーマットに直接依存しません。adapter が各 tool の出力を
+`c0Coverage` / `c1Coverage` に正規化します。
+
+```bash
+printf '{"c0Coverage": 82.1, "c1Coverage": 72.5}\n' > coverage-metrics.json
+
+./bin/hado evaluate \
+  --standard standards/web-service.yaml \
+  --coverage-input hado-json:coverage-metrics.json
+```
+
+Go coverprofile や `keyskey/gobce` の JSON output も adapter 経由で扱えます。
+
+```bash
+go test ./... -coverprofile=coverage.out
+gobce analyze --coverprofile coverage.out --format json --output gobce.json
+
+./bin/hado evaluate \
+  --standard standards/web-service.yaml \
+  --coverage-input go-coverprofile:coverage.out \
+  --coverage-input gobce-json:gobce.json
+```

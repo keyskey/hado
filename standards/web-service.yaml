@@ -1,0 +1,14 @@
+---
+id: web-service
+name: Web Service
+gates:
+  - id: test.c0_coverage
+    severity: major
+    required: true
+    threshold:
+      min: 80
+  - id: test.c1_coverage
+    severity: major
+    required: true
+    threshold:
+      min: 70

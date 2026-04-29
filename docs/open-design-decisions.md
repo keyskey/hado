@@ -207,19 +207,56 @@ Readiness Target
 - SARIF 互換を持たせるか
 - AI agent 向け report format を別に持つか
 
-## gobce integration
+## Coverage adapter and evidence contract
 
 決定済み:
 
 ```text
-gobce は別リポジトリとして開発する。
-HADO とは analyzer module として連携する。
+C0 / C1 coverage は producer-neutral な metric として扱う。
+HADO core は gobce / gobco / JaCoCo / lcov / Istanbul などの計測器や、
+推定値 / 実測値の違いを判定しない。
+producer-specific artifact は adapter が HADO の normalized coverage metrics へ変換する。
 ```
 
 未決:
 
-- HADO module mode の CLI サブコマンド名
-- `estimatedBranchCoverage` と `test.estimated_c1` の正確な metric naming
+- normalized coverage metrics schema に持たせる metadata
+  - language
+  - producer / tool name
+  - producer version
+  - metric source が estimated か measured か
+  - 対象 package / module / path scope
+  - confidence や adapter warning を表現するか
+- 複数 coverage evidence が同じ metric を出した場合の merge ルール
+  - 後勝ちにするか
+  - 明示 priority を持たせるか
+  - conflict として evaluation error にするか
+  - report に overwritten evidence を残すか
+- coverage metric の意味を adapter がどこまで保証するか
+  - Java / Kotlin の JaCoCo branch coverage を HADO の C1 とみなす条件
+  - JavaScript / TypeScript の lcov / Istanbul branch coverage を HADO の C1 とみなす条件
+  - Go coverprofile 由来 C0 と他言語 C0 の比較可能性
+- producer-specific adapter の schema versioning
+  - `keyskey/gobce` は pre-1.0 で JSON output が変わる可能性がある
+  - adapter が producer version を検出するか
+  - adapter version と producer version の compatibility をどう表現するか
+- HADO Manifest から coverage input / adapter を宣言する schema
+  - CLI flag と manifest 宣言の優先順位
+  - CI matrix / monorepo で複数 coverage artifact を扱う表現
+  - language autodetection を許可するか
+- adapter warning / recommendation を report に含める形式
+  - generated code の除外漏れ
+  - unsupported coverage feature
+  - partial parse
+  - source path resolution failure
+- report schema の coverage evidence 表現
+  - gate result には normalized metric の値を出す
+  - 詳細 report には adapter / source artifact / producer metadata を出すか
+  - 監査用途で元 artifact への参照を保持するか
+
+Go / gobce 固有で残る未決:
+
+- producer が HADO module として動く場合の CLI サブコマンド名
 - coverprofile と source path の解決方法
 - generated code の除外ルール
 - monorepo 内 Go module の扱い
