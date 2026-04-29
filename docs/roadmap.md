@@ -47,6 +47,18 @@ HADO の gate 展開もこの順序に寄せる。
 GitHub Actions 上で、Go service の最低限の Production Readiness を評価できる。
 ```
 
+### このリポジトリの現状（実装済みの範囲）
+
+現時点でコードベースに含まれるのは次のとおり。
+
+- HADO Manifest loader（`internal/manifest`）
+- Readiness Standard loader（`internal/standard`）
+- coverage adapter 層と C0 / C1 coverage gate（`internal/coverage`, `internal/gate`）
+- operations owner / runbook existence gate（manifest 由来の evidence と `internal/gate`）
+- `hado evaluate` の text / JSON 出力（`cmd/hado`）
+
+ロードマップ上は、module runner、追加 gate、Markdown / PR 連携などはこのあとである。
+
 MVP に含めるもの:
 
 - HADO Manifest loader
