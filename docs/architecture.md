@@ -238,6 +238,8 @@ report:
   github_pr_comment: true
 ```
 
+インフラ readiness や多数の standard パターンを抱えるときでも **マニフェストのトップレベル構造を増やさない**方針と、本体を薄く保つための **Adapter / Analyzer / Module の分担**については、[Infrastructure Readiness とマニフェスト設計](infrastructure-readiness-and-manifest-design.md) にまとめる。上記 YAML は論理モデルの例であり、長期的には `evidence` を adapter 参照や evidence bundle などの安定した形へ寄せることを想定する。
+
 ## Readiness Standard
 
 Readiness Standard は「この種類のサービスは、本番に出る前に最低限これを満たすべき」という再利用可能な基準である。
