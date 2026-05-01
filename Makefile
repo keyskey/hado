@@ -9,6 +9,8 @@ GOBCE_PACKAGE ?= github.com/keyskey/gobce/cmd/gobce@latest
 READINESS_COVERAGE ?= hado-coverage.json
 READINESS_MANIFEST ?= hado.yaml
 READINESS_STANDARD ?= standards/cli-service.yaml
+# Pinned image avoids npx + rolling npm deps on node:22-alpine (CI flakiness).
+MARKDOWNLINT_CLI2_IMAGE ?= davidanson/markdownlint-cli2:v0.22.1
 
 help:
 	@echo "Available targets:"
@@ -43,7 +45,7 @@ lint-yaml: check-docker
 	docker run --rm -v "$$(pwd):/work" -w /work python:3.12-alpine sh -lc "pip install --no-cache-dir yamllint >/dev/null && yamllint ."
 
 lint-markdown: check-docker
-	docker run --rm -v "$$(pwd):/work" -w /work node:22-alpine sh -lc "npx --yes markdownlint-cli2"
+	docker run --rm -v "$$(pwd):/work" -w /work "$(MARKDOWNLINT_CLI2_IMAGE)" "**/*.md" "#node_modules" "#.git" "#.tools"
 
 lint-go:
 	go vet ./...
