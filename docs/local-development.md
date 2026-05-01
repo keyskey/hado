@@ -15,7 +15,7 @@ make setup
 ```
 
 `make setup` は Go ツールチェーンの存在確認と、HADO 自身の readiness check で使う `gobce` CLI のインストールを行います。
-YAML / Markdown lint は都度 Docker コンテナで実行するため、ローカルに Python / Node.js の導入は不要です。
+YAML / Markdown の lint は Docker 上で実行します。Markdown は `npx` ではなく、バージョン固定の [davidanson/markdownlint-cli2](https://hub.docker.com/r/davidanson/markdownlint-cli2) イメージを使うため、ローカルに Node.js は不要です。
 
 ## 主要コマンド
 
