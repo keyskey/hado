@@ -19,7 +19,7 @@ Infrastructure Readiness は、実行基盤（Kubernetes / ECS / Cloud Run / App
 ## 設計指針の要約
 
 | 関心事 | 置き場 | 増え方 |
-|--------|--------|--------|
+| --- | --- | --- |
 | 「何を満たせばよいか」（gate、閾値、必須度） | Readiness Standard（YAML、複数ファイル可） | 組織・基盤・タイプ・Tier ごとにファイルが増える |
 | 「このサービスは誰で、証拠はどこから取るか」 | HADO Manifest（**安定した少数のブロック**） | モジュール数が増えても **トップレベルの形は変えない** |
 | プロデューサ固有のファイル形式 → 正規化 metric | Adapter（in-process が既定） | adapter 種別の列挙は増えるが、manifest は `adapter` + `path`（または同等の参照）の繰り返しに留める |
