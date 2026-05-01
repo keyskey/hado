@@ -275,3 +275,14 @@ Go / gobce 固有で残る未決:
 
 - 英語化のタイミング
 - 日本語版を残すか、英語版に完全移行するか
+
+## Infrastructure readiness と manifest / standard
+
+設計の原則は [Infrastructure Readiness とマニフェスト設計](infrastructure-readiness-and-manifest-design.md) に記す。次は実装・schema レベルで詰める未決事項である。
+
+- Readiness Standard の **分割・合成**の具体構文（`import` / `extends` / レイヤディレクトリ規約など）
+- 同一 gate ID の **上書き・マージ規則**（強さ、順序、禁止の衝突解決）
+- **EvaluationContext** の wire 形式（gate ID → 値の型、欠損、複数値）
+- 「どの gate をどの module / analyzer が満たすか」の **宣言の置き場**（standard annotation、別 registry、module manifest との対応）
+- **Evidence bundle** の schema と、Manifest からは bundle への **1 本参照**に収めるかどうか
+- 組織独自 gate ID の **名前空間規約**（例: `com.example.*`）と公開 catalog の要否
