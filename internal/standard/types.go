@@ -19,6 +19,9 @@ const (
 
 	// InfraDeploymentSpecExistsGateID gates on a deployment / workload spec reference (path, bundle id, URL, etc.).
 	InfraDeploymentSpecExistsGateID = "infra.deployment_spec_exists"
+
+	// ReleaseRollbackPlanExistsGateID gates on a documented rollback plan reference.
+	ReleaseRollbackPlanExistsGateID = "release.rollback_plan_exists"
 )
 
 // Standard defines the production readiness gates a service must satisfy.

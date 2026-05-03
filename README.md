@@ -48,7 +48,7 @@ Infrastructure、Application、Security などの readiness domain は、
 adapter や module が evidence を正規化し、standard の gate が判定します。
 
 現在の evaluator は coverage・operations・observability・infra（deployment
-参照）について Manifest 由来の existence gate を評価できます。
+参照）・release（rollback_plan）について Manifest 由来の existence gate を評価できます。
 Coverage tool 固有の出力は adapter が `c0Coverage` / `c1Coverage` に正規化します。
 詳細は [docs/implementation-status.md](docs/implementation-status.md) を参照してください。
 

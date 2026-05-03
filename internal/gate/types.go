@@ -21,6 +21,7 @@ type Metrics struct {
 	ObservabilitySLO       string
 	ObservabilityMonitors  string
 	ObservabilityDashboard string
+	ReleaseRollbackPlan    string
 	InfraDeploymentSpec    string
 }
 

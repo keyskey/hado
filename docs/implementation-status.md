@@ -35,6 +35,7 @@ required として宣言されているが、ここに無い gate id は **error
 - `observability.monitor_exists`（`evidence.observability.monitors` が非空）
 - `observability.dashboard_exists`（`evidence.observability.dashboard` が非空）
 - `infra.deployment_spec_exists`（`evidence.infra.deployment_spec` が非空; パス・URL・カタログ ID などの参照文字列として扱う）
+- `release.rollback_plan_exists`（`evidence.release.rollback_plan` が非空）
 
 ## Coverage adapter（`internal/coverage/parse.go` の `ParseAdapterInput`）
 
@@ -49,11 +50,12 @@ required として宣言されているが、ここに無い gate id は **error
 - `evidence.operations`（owner, runbook）
 - `evidence.observability`（`slo`, `monitors`, `dashboard` …各フィールドが該当 gate の「存在」判定に使われる）
 - `evidence.infra`（`deployment_spec`）
+- `evidence.release`（`rollback_plan`）
 - `evidence.coverage.inputs`（`adapter`, `path`）
 
 ## MVP・ロードマップとの差（メモ）
 
 計画全体は [roadmap.md](roadmap.md)。コードにまだ無い例:
 
-- module runner、release 向け gate（rollback・CI 自動化など）、インフラの threshold 型 gate、Markdown レポート、GitHub PR 連携
+- module runner、`release.automation_declared`、インフラ threshold 型 gate、Markdown レポート、GitHub PR 連携
 - `test.uncovered_branch` など gobce findings の評価結果への載せ方

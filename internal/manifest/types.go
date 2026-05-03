@@ -14,6 +14,7 @@ type Evidence struct {
 	Operations    OperationsEvidence    `yaml:"operations" json:"operations,omitempty"`
 	Observability ObservabilityEvidence `yaml:"observability" json:"observability,omitempty"`
 	Infra         InfraEvidence         `yaml:"infra" json:"infra,omitempty"`
+	Release       ReleaseEvidence       `yaml:"release" json:"release,omitempty"`
 }
 
 // CoverageEvidence declares coverage reports and the adapters that parse them.
@@ -43,4 +44,9 @@ type ObservabilityEvidence struct {
 // InfraEvidence declares infrastructure-related evidence references (deployment spec, IaC pointer, etc.).
 type InfraEvidence struct {
 	DeploymentSpec string `yaml:"deployment_spec" json:"deployment_spec,omitempty"`
+}
+
+// ReleaseEvidence declares release and rollback-related references.
+type ReleaseEvidence struct {
+	RollbackPlan string `yaml:"rollback_plan" json:"rollback_plan,omitempty"`
 }
