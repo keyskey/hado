@@ -95,6 +95,12 @@ func runEvaluate(args []string, stdout, stderr io.Writer) (int, error) {
 	if hadoManifest != nil {
 		metrics.OperationsOwner = strings.TrimSpace(hadoManifest.Evidence.Operations.Owner)
 		metrics.OperationsRunbook = strings.TrimSpace(hadoManifest.Evidence.Operations.Runbook)
+		metrics.ObservabilitySLO = strings.TrimSpace(hadoManifest.Evidence.Observability.SLO)
+		metrics.ObservabilityMonitors = strings.TrimSpace(hadoManifest.Evidence.Observability.Monitors)
+		metrics.ObservabilityDashboard = strings.TrimSpace(hadoManifest.Evidence.Observability.Dashboard)
+		metrics.ReleaseRollbackPlan = strings.TrimSpace(hadoManifest.Evidence.Release.RollbackPlan)
+		metrics.ReleaseAutomationDeclared = hadoManifest.Evidence.Release.AutomationDeclared()
+		metrics.InfraDeploymentSpec = strings.TrimSpace(hadoManifest.Evidence.Infra.DeploymentSpec)
 	}
 
 	evaluation, err := gate.Evaluate(readinessStandard, metrics)

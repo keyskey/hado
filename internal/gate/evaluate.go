@@ -42,6 +42,42 @@ func Evaluate(s standard.Standard, metrics Metrics) (Evaluation, error) {
 			if gate.Required && !result.Passed {
 				evaluation.Status = DecisionBlocked
 			}
+		case standard.ObservabilitySLOExistsGateID:
+			result := evaluateExistsGate(gate, metrics.ObservabilitySLO != "", "SLO / SLI evidence is defined.", "SLO / SLI evidence is not defined.")
+			evaluation.Results = append(evaluation.Results, result)
+			if gate.Required && !result.Passed {
+				evaluation.Status = DecisionBlocked
+			}
+		case standard.ObservabilityMonitorExistsGateID:
+			result := evaluateExistsGate(gate, metrics.ObservabilityMonitors != "", "Monitor evidence is defined.", "Monitor evidence is not defined.")
+			evaluation.Results = append(evaluation.Results, result)
+			if gate.Required && !result.Passed {
+				evaluation.Status = DecisionBlocked
+			}
+		case standard.ObservabilityDashboardExistsGateID:
+			result := evaluateExistsGate(gate, metrics.ObservabilityDashboard != "", "Dashboard evidence is defined.", "Dashboard evidence is not defined.")
+			evaluation.Results = append(evaluation.Results, result)
+			if gate.Required && !result.Passed {
+				evaluation.Status = DecisionBlocked
+			}
+		case standard.InfraDeploymentSpecExistsGateID:
+			result := evaluateExistsGate(gate, metrics.InfraDeploymentSpec != "", "Deployment spec reference is defined.", "Deployment spec reference is not defined.")
+			evaluation.Results = append(evaluation.Results, result)
+			if gate.Required && !result.Passed {
+				evaluation.Status = DecisionBlocked
+			}
+		case standard.ReleaseRollbackPlanExistsGateID:
+			result := evaluateExistsGate(gate, metrics.ReleaseRollbackPlan != "", "Rollback plan is defined.", "Rollback plan is not defined.")
+			evaluation.Results = append(evaluation.Results, result)
+			if gate.Required && !result.Passed {
+				evaluation.Status = DecisionBlocked
+			}
+		case standard.ReleaseAutomationDeclaredGateID:
+			result := evaluateExistsGate(gate, metrics.ReleaseAutomationDeclared, "Release automation workflows are declared.", "Release automation workflows are not declared (evidence.release.automation.workflow_refs).")
+			evaluation.Results = append(evaluation.Results, result)
+			if gate.Required && !result.Passed {
+				evaluation.Status = DecisionBlocked
+			}
 		default:
 			if gate.Required {
 				return Evaluation{Status: DecisionError}, fmt.Errorf("unsupported required gate %q", gate.ID)

@@ -14,10 +14,16 @@ const (
 
 // Metrics are normalized values supplied by modules or evidence parsers.
 type Metrics struct {
-	C0CoveragePercent *float64
-	C1CoveragePercent *float64
-	OperationsOwner   string
-	OperationsRunbook string
+	C0CoveragePercent         *float64
+	C1CoveragePercent         *float64
+	OperationsOwner           string
+	OperationsRunbook         string
+	ObservabilitySLO          string
+	ObservabilityMonitors     string
+	ObservabilityDashboard    string
+	ReleaseRollbackPlan       string
+	ReleaseAutomationDeclared bool
+	InfraDeploymentSpec       string
 }
 
 // Result captures a single gate evaluation.

@@ -10,8 +10,11 @@ type Manifest struct {
 
 // Evidence groups evidence declarations by readiness domain.
 type Evidence struct {
-	Coverage   CoverageEvidence   `yaml:"coverage" json:"coverage,omitempty"`
-	Operations OperationsEvidence `yaml:"operations" json:"operations,omitempty"`
+	Coverage      CoverageEvidence      `yaml:"coverage" json:"coverage,omitempty"`
+	Operations    OperationsEvidence    `yaml:"operations" json:"operations,omitempty"`
+	Observability ObservabilityEvidence `yaml:"observability" json:"observability,omitempty"`
+	Infra         InfraEvidence         `yaml:"infra" json:"infra,omitempty"`
+	Release       ReleaseEvidence       `yaml:"release" json:"release,omitempty"`
 }
 
 // CoverageEvidence declares coverage reports and the adapters that parse them.
@@ -29,4 +32,29 @@ type CoverageInput struct {
 type OperationsEvidence struct {
 	Owner   string `yaml:"owner" json:"owner,omitempty"`
 	Runbook string `yaml:"runbook" json:"runbook,omitempty"`
+}
+
+// ObservabilityEvidence declares references to SLO, monitors, and dashboard evidence (paths, URLs, or catalog IDs).
+type ObservabilityEvidence struct {
+	SLO       string `yaml:"slo" json:"slo,omitempty"`
+	Monitors  string `yaml:"monitors" json:"monitors,omitempty"`
+	Dashboard string `yaml:"dashboard" json:"dashboard,omitempty"`
+}
+
+// InfraEvidence declares infrastructure-related evidence references (deployment spec, IaC pointer, etc.).
+type InfraEvidence struct {
+	DeploymentSpec string `yaml:"deployment_spec" json:"deployment_spec,omitempty"`
+}
+
+// ReleaseEvidence declares release and rollback-related references.
+type ReleaseEvidence struct {
+	RollbackPlan string                    `yaml:"rollback_plan" json:"rollback_plan,omitempty"`
+	Automation   ReleaseAutomationEvidence `yaml:"automation" json:"automation,omitempty"`
+}
+
+// ReleaseAutomationEvidence declares where automated release / deploy pipelines live (paths, URLs, workflow names).
+// Systems (e.g. github_actions, circleci, argo_workflow) are optional metadata for tooling; phase-1 gates use workflow_refs only.
+type ReleaseAutomationEvidence struct {
+	WorkflowRefs []string `yaml:"workflow_refs" json:"workflow_refs,omitempty"`
+	Systems      []string `yaml:"systems" json:"systems,omitempty"`
 }

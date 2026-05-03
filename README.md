@@ -47,9 +47,11 @@ HADO core は、特定の runtime、tool、SaaS、infrastructure provider の
 Infrastructure、Application、Security などの readiness domain は、
 adapter や module が evidence を正規化し、standard の gate が判定します。
 
-現在の最小 evaluator は coverage evidence と operation evidence に対応しています。
-Coverage tool 固有の出力は adapter が `c0Coverage` / `c1Coverage` に正規化し、
-operation evidence は Manifest の owner / runbook を使って判定します。
+現在の evaluator は、coverage・operations・observability・release（rollback と
+自動リリース用 `workflow_refs` の宣言）・infra（deployment 参照）の各 evidence を
+Manifest から読み、対応する existence 系 gate を評価できます（詳細は
+[docs/implementation-status.md](docs/implementation-status.md)）。
+Coverage tool 固有の出力は adapter が `c0Coverage` / `c1Coverage` に正規化します。
 
 ```bash
 printf '{"c0Coverage": 82.1, "c1Coverage": 72.5}\n' > coverage-metrics.json
