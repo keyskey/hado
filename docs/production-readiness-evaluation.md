@@ -1,7 +1,7 @@
 # Production Readiness の計測と評価
 
 Status: 初期評価モデルノート
-Date: 2026-04-25
+Date: 2026-04-25（CLI フェーズとの対応追記: 2026-05-03）
 
 ## 評価の目的
 
@@ -140,6 +140,8 @@ gates:
 ## Decision
 
 HADO は module output を Readiness Standard の gate と照合し、最終 decision を返す。
+
+**CLI フェーズとの対応（設計）:** **target** で「どの standard のどの gate に対応するか」を確定し、**charge** で evidence を揃えて正規化し、**fire** で照合と decision まで行う。現行の `hado evaluate` は **charge に相当する処理と fire を一括**で実行している。詳細は [概要](overview.md) と [アーキテクチャ](architecture.md) を参照する。
 
 ```text
 ready

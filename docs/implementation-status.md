@@ -8,7 +8,9 @@
 | --- | --- |
 | 引数なし | 一行ヘルプ |
 | `version` / `-v` / `--version` | 実装済み |
-| `evaluate` | 実装済み |
+| `evaluate` | 実装済み（設計上は `fire` に相当する判定を、当面は一括で実行） |
+
+**設計（未実装）:** `hado target`（対話で manifest に照準を書く）/ `hado charge`（manifest メタデータから evidence を自動補完）/ `hado fire`（判定のみ）の 3 段階は [overview.md](overview.md) と [architecture.md](architecture.md) に記載。実装時は本表を更新する。
 
 `evaluate` の主なフラグ（`cmd/hado/main.go` の `runEvaluate`）:
 
