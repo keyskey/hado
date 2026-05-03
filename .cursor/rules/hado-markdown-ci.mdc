@@ -1,0 +1,16 @@
+---
+description: Markdown edits should pass the same checks as CI (markdownlint)
+globs: docs/**/*.md,README.md
+alwaysApply: false
+---
+
+# Markdown と CI（markdownlint）
+
+`docs/**/*.md` やルート `README.md` を変更したら、**push / PR の前**に次のいずれかを実行する。
+
+- `make lint-markdown` … Markdown のみ（Docker 必須）
+- `make lint` … YAML + Markdown + `go vet`（Lint ジョブ全体に近い）
+
+チーム推奨: `make setup-hooks` で pre-push を有効にする。フックは **`make ci-lint`（`fmt-check` + `lint`）** を 1 回起動する（GitHub Actions の Lint ジョブと同じ）。**`go test` は Test ワークフローの `readiness-check` でのみ実行**し、Lint と二重に走らせない。Go は **PATH** または **`make bootstrap-go` 後の `.tools/go`**。詳細は [docs/local-development.md](docs/local-development.md)。
+
+テーブルは MD060 対策のため、区切り行を `| --- | --- |` のように **パイプの内側にスペース** を入れる。

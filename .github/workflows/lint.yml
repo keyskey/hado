@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   lint:
-    name: Lint and Format Check
+    name: Format and static lint
     runs-on: ubuntu-latest
 
     steps:
@@ -22,8 +22,5 @@ jobs:
           go-version-file: go.mod
           cache: true
 
-      - name: Check Go formatting
-        run: make fmt-check
-
-      - name: Run lint
-        run: make lint
+      - name: make ci-lint
+        run: make ci-lint
