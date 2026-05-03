@@ -8,6 +8,9 @@ hado-coverage.json
 # Local toolchains
 /.tools/
 
+# direnv (machine-local)
+.envrc
+
 # Local editor and OS files
 .DS_Store
 *.swp

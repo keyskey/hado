@@ -1,0 +1,9 @@
+{
+  "go.goroot": "${workspaceFolder}/.tools/go",
+  "[go]": {
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  }
+}
