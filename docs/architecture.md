@@ -15,10 +15,10 @@ hado
 │   └── report generator
 │
 ├── hado-cli
-│   ├── hado target   # 照準: service × standard の確定
-│   ├── hado charge   # 充填: 証跡収集・正規化（重い処理の主戦場）
-│   ├── hado fire     # 判定: gate / decision（デプロイはしない）
-│   └── hado evaluate # 現行実装: 上記を一括に近い形で実行（将来は fire の別名など）
+│   ├── hado target   # manifest に service / standard を書く（対話またはフラグ）
+│   ├── hado charge   # （設計）証跡収集・manifest の自動補完
+│   ├── hado fire     # （設計）gate 判定のみ（デプロイしない）
+│   └── hado evaluate # 現行: 判定を一括実行
 │
 ├── hado-gate
 │   └── deployment and release decision layer
@@ -245,6 +245,8 @@ Report
 ## HADO Manifest
 
 `hado.yaml` は、評価対象サービスが自分自身と evidence の場所を宣言するファイルである。単なる設定ではなく、リリース準備状態の入口になる manifest として扱う。
+
+**実装済みのトップレベル（v1）:** `service`（`id` / `name`）と `standard`（`id`：Readiness Standard の論理 id または標準 YAML へのパス）は `hado target` が書き込める。`evidence` 以下の形はこのリポジトリの [実装状況](implementation-status.md) に従う。
 
 ```yaml
 version: v1
