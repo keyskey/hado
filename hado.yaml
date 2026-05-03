@@ -1,4 +1,9 @@
 version: v1
+service:
+  id: hado
+  name: hado
+standard:
+  id: cli-service
 evidence:
   coverage:
     inputs:
