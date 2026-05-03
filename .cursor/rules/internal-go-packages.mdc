@@ -1,0 +1,41 @@
+---
+description: Layout and naming for internal Go packages (doc.go, split by concern)
+globs: internal/**/*.go
+alwaysApply: false
+---
+
+# Internal Go package layout
+
+New or refactored code under `internal/` should follow this structure so packages stay easy to scan and `godoc` stays accurate.
+
+## `doc.go`
+
+- **Only** the package comment and `package <name>`. No types, constants, functions, or imports.
+- One sentence describing what the package does; expand in prose if needed.
+
+## Split the rest by responsibility
+
+Use small, purpose-named files (not a second catch-all `doc.go`):
+
+| File (examples) | Contents |
+|-----------------|----------|
+| `types.go` | Exported structs and package-level constants |
+| `load.go` | Reading from disk / config (YAML, JSON, etc.) |
+| `validate.go` | `Validate` and related checks |
+| `<domain>.go` | Focused logic (e.g. `profile.go`, `parse.go`, `specs.go`, `evaluate.go`, `inputs.go`) |
+
+Prefer **one main concern per file**. If a file grows large, split on boundaries (e.g. parsing vs CLI/spec helpers) rather than merging unrelated APIs.
+
+## References in this repo
+
+- `internal/gate` — `types.go`, `evaluate.go`
+- `internal/standard` — `types.go`, `load.go`, `validate.go`
+- `internal/coverage` — `types.go`, `profile.go`, `parse.go`, `specs.go`, `validate.go`
+- `internal/manifest` — `types.go`, `load.go`, `validate.go`, `inputs.go`
+
+## Do not
+
+- Put implementation in `doc.go`.
+- Repeat the package comment in multiple `.go` files; keep it in `doc.go` only.
+
+`internal/integration` may stay **doc-only** if it is intentionally a contract marker with no implementation.
