@@ -31,4 +31,7 @@ make ci         # fmt-check + lint + test
 ## 補足
 
 `make ci` は CI のチェック順序に合わせて、`fmt-check` -> `lint` -> `test` を順に実行します。
+
+実装を変えたあとのドキュメント更新は、`.cursor/rules/hado-implementation-docs.mdc` と Skill `hado-doc-sync` を参照してください。
+
 `make readiness-check` は `coverage.out` と `hado-coverage.json` を生成します。これらはローカル/CI の生成物として Git 管理から除外しています。

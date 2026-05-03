@@ -1,0 +1,21 @@
+---
+description: Keep docs in sync when changing HADO behavior (gates, CLI, coverage, manifest)
+globs: cmd/hado/**/*.go,internal/gate/**/*.go,internal/coverage/**/*.go,internal/manifest/**/*.go,internal/standard/**/*.go
+alwaysApply: false
+---
+
+# 実装変更とドキュメントの同期
+
+次を編集したら、**同じ変更セット**でドキュメントを更新する。コードだけマージしない。
+
+1. **[docs/implementation-status.md](docs/implementation-status.md)**  
+   - 実装済みゲート、`hado evaluate` のフラグ・出力形式、coverage adapter 名、MVP との差分など、**実装の真実**をここに反映する。  
+   - 手書きでよい。更新内容が大きいときは Cursor の Skill **`hado-doc-sync`** を明示的に使ってもよい。
+
+2. **ロードマップの「現状」**  
+   - [docs/roadmap.md](docs/roadmap.md) の「このリポジトリの現状」が古くなっていたら、要約を直す（詳細は `implementation-status.md` に寄せてよい）。
+
+3. **README / アーキテクチャ**  
+   - 利用者向けの CLI 説明（ルート [README.md](README.md) や [docs/architecture.md](docs/architecture.md)）が実装と矛盾していたら合わせる。
+
+ゲートを `internal/gate/evaluate.go` に追加したら、**必ず** `implementation-status.md` の実装済みゲート一覧と、必要なら `roadmap.md` の Phase 3 記述を更新する。
