@@ -8,9 +8,17 @@
 | --- | --- |
 | 引数なし | 一行ヘルプ |
 | `version` / `-v` / `--version` | 実装済み |
+| `target` | 実装済み（`--manifest` 必須。TTY では対話、非 TTY では `--service-name` / `--service-id` / `--standard-id` で更新。既存 manifest はマージ） |
 | `evaluate` | 実装済み（設計上は `fire` に相当する判定を、当面は一括で実行） |
 
-**設計（未実装）:** `hado target`（対話で manifest に照準を書く）/ `hado charge`（manifest メタデータから evidence を自動補完）/ `hado fire`（判定のみ）の 3 段階は [overview.md](overview.md) と [architecture.md](architecture.md) に記載。実装時は本表を更新する。
+**設計（未実装）:** `hado charge`（manifest メタデータから evidence を自動補完）/ `hado fire`（判定のみ）の 2 段階は [overview.md](overview.md) と [architecture.md](architecture.md) に記載。実装時は本表を更新する。
+
+`target` の主なフラグ（`cmd/hado/target.go` の `runTarget`）:
+
+- `--manifest`（必須）
+- `--service-name`（任意; 非 TTY では既存 manifest かフラグのどちらかが必要）
+- `--service-id`（任意; 空のときは `service-name` と同じにできる）
+- `--standard-id`（任意; 非 TTY では既存 manifest かフラグのどちらかが必要）
 
 `evaluate` の主なフラグ（`cmd/hado/main.go` の `runEvaluate`）:
 

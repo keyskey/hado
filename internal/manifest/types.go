@@ -2,19 +2,32 @@ package manifest
 
 // Manifest declares the evaluated service and the evidence HADO should read.
 type Manifest struct {
-	Version  string   `yaml:"version" json:"version,omitempty"`
-	Evidence Evidence `yaml:"evidence" json:"evidence,omitempty"`
+	Version  string      `yaml:"version" json:"version,omitempty"`
+	Service  Service     `yaml:"service,omitempty" json:"service,omitempty"`
+	Standard StandardRef `yaml:"standard,omitempty" json:"standard,omitempty"`
+	Evidence Evidence    `yaml:"evidence,omitempty" json:"evidence,omitempty"`
 
 	baseDir string
 }
 
+// Service identifies the workload HADO evaluates (minimal fields for targeting).
+type Service struct {
+	ID   string `yaml:"id,omitempty" json:"id,omitempty"`
+	Name string `yaml:"name,omitempty" json:"name,omitempty"`
+}
+
+// StandardRef points at the Readiness Standard applied to this service (id or file path).
+type StandardRef struct {
+	ID string `yaml:"id,omitempty" json:"id,omitempty"`
+}
+
 // Evidence groups evidence declarations by readiness domain.
 type Evidence struct {
-	Coverage      CoverageEvidence      `yaml:"coverage" json:"coverage,omitempty"`
-	Operations    OperationsEvidence    `yaml:"operations" json:"operations,omitempty"`
-	Observability ObservabilityEvidence `yaml:"observability" json:"observability,omitempty"`
-	Infra         InfraEvidence         `yaml:"infra" json:"infra,omitempty"`
-	Release       ReleaseEvidence       `yaml:"release" json:"release,omitempty"`
+	Coverage      CoverageEvidence      `yaml:"coverage,omitempty" json:"coverage,omitempty"`
+	Operations    OperationsEvidence    `yaml:"operations,omitempty" json:"operations,omitempty"`
+	Observability ObservabilityEvidence `yaml:"observability,omitempty" json:"observability,omitempty"`
+	Infra         InfraEvidence         `yaml:"infra,omitempty" json:"infra,omitempty"`
+	Release       ReleaseEvidence       `yaml:"release,omitempty" json:"release,omitempty"`
 }
 
 // CoverageEvidence declares coverage reports and the adapters that parse them.
