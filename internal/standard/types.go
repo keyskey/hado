@@ -9,6 +9,13 @@ const (
 	OperationsOwnerExistsGateID = "operations.owner_exists"
 	// OperationsRunbookExistsGateID is the gate id used for operational runbook readiness.
 	OperationsRunbookExistsGateID = "operations.runbook_exists"
+
+	// ObservabilitySLOExistsGateID gates on declared SLO / SLI evidence (manifest reference non-empty).
+	ObservabilitySLOExistsGateID = "observability.slo_exists"
+	// ObservabilityMonitorExistsGateID gates on monitor / alert evidence reference.
+	ObservabilityMonitorExistsGateID = "observability.monitor_exists"
+	// ObservabilityDashboardExistsGateID gates on dashboard evidence reference.
+	ObservabilityDashboardExistsGateID = "observability.dashboard_exists"
 )
 
 // Standard defines the production readiness gates a service must satisfy.

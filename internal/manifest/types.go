@@ -10,8 +10,9 @@ type Manifest struct {
 
 // Evidence groups evidence declarations by readiness domain.
 type Evidence struct {
-	Coverage   CoverageEvidence   `yaml:"coverage" json:"coverage,omitempty"`
-	Operations OperationsEvidence `yaml:"operations" json:"operations,omitempty"`
+	Coverage      CoverageEvidence      `yaml:"coverage" json:"coverage,omitempty"`
+	Operations    OperationsEvidence    `yaml:"operations" json:"operations,omitempty"`
+	Observability ObservabilityEvidence `yaml:"observability" json:"observability,omitempty"`
 }
 
 // CoverageEvidence declares coverage reports and the adapters that parse them.
@@ -29,4 +30,11 @@ type CoverageInput struct {
 type OperationsEvidence struct {
 	Owner   string `yaml:"owner" json:"owner,omitempty"`
 	Runbook string `yaml:"runbook" json:"runbook,omitempty"`
+}
+
+// ObservabilityEvidence declares references to SLO, monitors, and dashboard evidence (paths, URLs, or catalog IDs).
+type ObservabilityEvidence struct {
+	SLO       string `yaml:"slo" json:"slo,omitempty"`
+	Monitors  string `yaml:"monitors" json:"monitors,omitempty"`
+	Dashboard string `yaml:"dashboard" json:"dashboard,omitempty"`
 }

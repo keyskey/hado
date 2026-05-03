@@ -42,6 +42,24 @@ func Evaluate(s standard.Standard, metrics Metrics) (Evaluation, error) {
 			if gate.Required && !result.Passed {
 				evaluation.Status = DecisionBlocked
 			}
+		case standard.ObservabilitySLOExistsGateID:
+			result := evaluateExistsGate(gate, metrics.ObservabilitySLO != "", "SLO / SLI evidence is defined.", "SLO / SLI evidence is not defined.")
+			evaluation.Results = append(evaluation.Results, result)
+			if gate.Required && !result.Passed {
+				evaluation.Status = DecisionBlocked
+			}
+		case standard.ObservabilityMonitorExistsGateID:
+			result := evaluateExistsGate(gate, metrics.ObservabilityMonitors != "", "Monitor evidence is defined.", "Monitor evidence is not defined.")
+			evaluation.Results = append(evaluation.Results, result)
+			if gate.Required && !result.Passed {
+				evaluation.Status = DecisionBlocked
+			}
+		case standard.ObservabilityDashboardExistsGateID:
+			result := evaluateExistsGate(gate, metrics.ObservabilityDashboard != "", "Dashboard evidence is defined.", "Dashboard evidence is not defined.")
+			evaluation.Results = append(evaluation.Results, result)
+			if gate.Required && !result.Passed {
+				evaluation.Status = DecisionBlocked
+			}
 		default:
 			if gate.Required {
 				return Evaluation{Status: DecisionError}, fmt.Errorf("unsupported required gate %q", gate.ID)

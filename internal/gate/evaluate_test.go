@@ -42,7 +42,7 @@ func TestEvaluateRejectsUnsupportedRequiredGate(t *testing.T) {
 		ID: "test-standard",
 		Gates: []standard.Gate{
 			{
-				ID:       "observability.slo_exists",
+				ID:       "com.example.custom_gate",
 				Required: true,
 			},
 		},
