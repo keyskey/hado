@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+# Same as .github/workflows/lint.yml: make ci-lint (fmt-check + lint; no go test).
+# Unit tests run once in the Test workflow via make readiness-check.
+set -e
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+make ci-lint

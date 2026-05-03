@@ -21,6 +21,7 @@ HADO という名前は「波動砲」から来ています。波動砲は、日
 ## Docs
 
 - [Project HADO ドキュメント](docs/README.md)
+- [実装状況（手保守; Cursor Skill `hado-doc-sync`）](docs/implementation-status.md)
 - [ローカル開発コマンド](docs/local-development.md)
 
 ## Build and run
@@ -37,8 +38,9 @@ make build
 
 `hado evaluate` は、Manifest や CLI option で渡された evidence を
 Readiness Standard の gate と照合し、required gate を満たしていれば
-`READY`、満たしていなければ `BLOCKED` を返します。`BLOCKED` の場合は
-CI で扱いやすいように exit code 1 で終了します。
+`READY`、満たしていなければ `BLOCKED` を返します。終了コードは
+`0`（ready）、`1`（blocked）、`2`（エラー・未対応の required gate など）です。
+`BLOCKED` のときは CI で扱いやすいように 1 で終了します。
 
 HADO core は、特定の runtime、tool、SaaS、infrastructure provider の
 フォーマットに直接依存しません。Coverage、Operation、Observability、
