@@ -1,6 +1,7 @@
 package manifest
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -42,10 +43,16 @@ func parseManifestBytes(data []byte, baseDir string) (Manifest, error) {
 func (m Manifest) Save(path string) error {
 	saveCopy := m
 	saveCopy.baseDir = ""
-	data, err := yaml.Marshal(&saveCopy)
-	if err != nil {
+	var buf bytes.Buffer
+	enc := yaml.NewEncoder(&buf)
+	enc.SetIndent(2)
+	if err := enc.Encode(&saveCopy); err != nil {
 		return fmt.Errorf("marshal manifest: %w", err)
 	}
+	if err := enc.Close(); err != nil {
+		return fmt.Errorf("close manifest encoder: %w", err)
+	}
+	data := buf.Bytes()
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 		return fmt.Errorf("create manifest directory: %w", err)
 	}
