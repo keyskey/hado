@@ -49,6 +49,8 @@ func run(args []string, stdout, stderr io.Writer) (int, error) {
 		return runEvaluate(args[1:], stdout, stderr)
 	case "target":
 		return runTarget(args[1:], os.Stdin, stdout, stderr)
+	case "charge":
+		return runCharge(args[1:], stdout, stderr)
 	default:
 		return 2, fmt.Errorf("unknown command %q", args[0])
 	}
