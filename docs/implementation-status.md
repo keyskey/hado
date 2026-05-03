@@ -9,9 +9,21 @@
 | 引数なし | 一行ヘルプ |
 | `version` / `-v` / `--version` | 実装済み |
 | `target` | 実装済み（`--manifest` 必須。TTY では対話、非 TTY では `--service-name` / `--service-id` / `--standard-id` で更新。既存 manifest はマージ） |
+| `charge` | 実装済み（coverage MVP: `internal/charge` の **plan → gap → apply**。`--apply` で `go-gobce` プリセットのみ） |
 | `evaluate` | 実装済み（設計上は `fire` に相当する判定を、当面は一括で実行） |
 
-**設計（未実装）:** `hado charge`（manifest メタデータから evidence を自動補完）/ `hado fire`（判定のみ）の 2 段階は [overview.md](overview.md) と [architecture.md](architecture.md) に記載。実装時は本表を更新する。
+**設計（未実装）:** `hado fire`（判定のみを `evaluate` から分離）や、charge の Datadog / Notion 等は [overview.md](overview.md) と [architecture.md](architecture.md) に記載。
+
+`charge` の主なフラグ（`cmd/hado/charge.go` の `runCharge`）:
+
+- `--manifest`（必須）
+- `--standard`（任意; 省略時は manifest の `standard.id` から `standards/<id>.yaml` または相対パスで解決）
+- `--standards-dir`（任意; 既定は manifest と同じディレクトリの `standards/`）
+- `--apply`（指定時のみ `go test` + `gobce analyze` を実行し manifest の `evidence.coverage.inputs` を更新）
+- `--preset`（既定 `go-gobce` のみサポート）
+- `--output`：`text` または `json`
+
+`charge` の終了コード: `0` = gap 充足（coverage 要件を満たす入力がある、または standard に coverage gate が無い）、`1` = gap 未充足、`2` = エラー（引数・読み込み・apply 失敗など）。
 
 `target` の主なフラグ（`cmd/hado/target.go` の `runTarget`）:
 
