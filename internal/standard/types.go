@@ -16,6 +16,9 @@ const (
 	ObservabilityMonitorExistsGateID = "observability.monitor_exists"
 	// ObservabilityDashboardExistsGateID gates on dashboard evidence reference.
 	ObservabilityDashboardExistsGateID = "observability.dashboard_exists"
+
+	// InfraDeploymentSpecExistsGateID gates on a deployment / workload spec reference (path, bundle id, URL, etc.).
+	InfraDeploymentSpecExistsGateID = "infra.deployment_spec_exists"
 )
 
 // Standard defines the production readiness gates a service must satisfy.

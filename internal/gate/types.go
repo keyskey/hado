@@ -21,6 +21,7 @@ type Metrics struct {
 	ObservabilitySLO       string
 	ObservabilityMonitors  string
 	ObservabilityDashboard string
+	InfraDeploymentSpec    string
 }
 
 // Result captures a single gate evaluation.

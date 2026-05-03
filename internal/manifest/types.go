@@ -13,6 +13,7 @@ type Evidence struct {
 	Coverage      CoverageEvidence      `yaml:"coverage" json:"coverage,omitempty"`
 	Operations    OperationsEvidence    `yaml:"operations" json:"operations,omitempty"`
 	Observability ObservabilityEvidence `yaml:"observability" json:"observability,omitempty"`
+	Infra         InfraEvidence         `yaml:"infra" json:"infra,omitempty"`
 }
 
 // CoverageEvidence declares coverage reports and the adapters that parse them.
@@ -37,4 +38,9 @@ type ObservabilityEvidence struct {
 	SLO       string `yaml:"slo" json:"slo,omitempty"`
 	Monitors  string `yaml:"monitors" json:"monitors,omitempty"`
 	Dashboard string `yaml:"dashboard" json:"dashboard,omitempty"`
+}
+
+// InfraEvidence declares infrastructure-related evidence references (deployment spec, IaC pointer, etc.).
+type InfraEvidence struct {
+	DeploymentSpec string `yaml:"deployment_spec" json:"deployment_spec,omitempty"`
 }

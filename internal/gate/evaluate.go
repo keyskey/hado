@@ -60,6 +60,12 @@ func Evaluate(s standard.Standard, metrics Metrics) (Evaluation, error) {
 			if gate.Required && !result.Passed {
 				evaluation.Status = DecisionBlocked
 			}
+		case standard.InfraDeploymentSpecExistsGateID:
+			result := evaluateExistsGate(gate, metrics.InfraDeploymentSpec != "", "Deployment spec reference is defined.", "Deployment spec reference is not defined.")
+			evaluation.Results = append(evaluation.Results, result)
+			if gate.Required && !result.Passed {
+				evaluation.Status = DecisionBlocked
+			}
 		default:
 			if gate.Required {
 				return Evaluation{Status: DecisionError}, fmt.Errorf("unsupported required gate %q", gate.ID)

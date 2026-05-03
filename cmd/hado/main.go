@@ -98,6 +98,7 @@ func runEvaluate(args []string, stdout, stderr io.Writer) (int, error) {
 		metrics.ObservabilitySLO = strings.TrimSpace(hadoManifest.Evidence.Observability.SLO)
 		metrics.ObservabilityMonitors = strings.TrimSpace(hadoManifest.Evidence.Observability.Monitors)
 		metrics.ObservabilityDashboard = strings.TrimSpace(hadoManifest.Evidence.Observability.Dashboard)
+		metrics.InfraDeploymentSpec = strings.TrimSpace(hadoManifest.Evidence.Infra.DeploymentSpec)
 	}
 
 	evaluation, err := gate.Evaluate(readinessStandard, metrics)
