@@ -22,6 +22,8 @@ const (
 
 	// ReleaseRollbackPlanExistsGateID gates on a documented rollback plan reference.
 	ReleaseRollbackPlanExistsGateID = "release.rollback_plan_exists"
+	// ReleaseAutomationDeclaredGateID gates on at least one non-empty workflow_refs entry under evidence.release.automation.
+	ReleaseAutomationDeclaredGateID = "release.automation_declared"
 )
 
 // Standard defines the production readiness gates a service must satisfy.

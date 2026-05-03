@@ -72,6 +72,12 @@ func Evaluate(s standard.Standard, metrics Metrics) (Evaluation, error) {
 			if gate.Required && !result.Passed {
 				evaluation.Status = DecisionBlocked
 			}
+		case standard.ReleaseAutomationDeclaredGateID:
+			result := evaluateExistsGate(gate, metrics.ReleaseAutomationDeclared, "Release automation workflows are declared.", "Release automation workflows are not declared (evidence.release.automation.workflow_refs).")
+			evaluation.Results = append(evaluation.Results, result)
+			if gate.Required && !result.Passed {
+				evaluation.Status = DecisionBlocked
+			}
 		default:
 			if gate.Required {
 				return Evaluation{Status: DecisionError}, fmt.Errorf("unsupported required gate %q", gate.ID)

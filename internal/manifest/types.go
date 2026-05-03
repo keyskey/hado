@@ -48,5 +48,13 @@ type InfraEvidence struct {
 
 // ReleaseEvidence declares release and rollback-related references.
 type ReleaseEvidence struct {
-	RollbackPlan string `yaml:"rollback_plan" json:"rollback_plan,omitempty"`
+	RollbackPlan string                    `yaml:"rollback_plan" json:"rollback_plan,omitempty"`
+	Automation   ReleaseAutomationEvidence `yaml:"automation" json:"automation,omitempty"`
+}
+
+// ReleaseAutomationEvidence declares where automated release / deploy pipelines live (paths, URLs, workflow names).
+// Systems (e.g. github_actions, circleci, argo_workflow) are optional metadata for tooling; phase-1 gates use workflow_refs only.
+type ReleaseAutomationEvidence struct {
+	WorkflowRefs []string `yaml:"workflow_refs" json:"workflow_refs,omitempty"`
+	Systems      []string `yaml:"systems" json:"systems,omitempty"`
 }

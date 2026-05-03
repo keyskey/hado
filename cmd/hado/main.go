@@ -99,6 +99,7 @@ func runEvaluate(args []string, stdout, stderr io.Writer) (int, error) {
 		metrics.ObservabilityMonitors = strings.TrimSpace(hadoManifest.Evidence.Observability.Monitors)
 		metrics.ObservabilityDashboard = strings.TrimSpace(hadoManifest.Evidence.Observability.Dashboard)
 		metrics.ReleaseRollbackPlan = strings.TrimSpace(hadoManifest.Evidence.Release.RollbackPlan)
+		metrics.ReleaseAutomationDeclared = hadoManifest.Evidence.Release.AutomationDeclared()
 		metrics.InfraDeploymentSpec = strings.TrimSpace(hadoManifest.Evidence.Infra.DeploymentSpec)
 	}
 
