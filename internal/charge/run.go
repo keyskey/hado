@@ -18,7 +18,7 @@ func RunCoverage(opts RunOptions, standardsDir string) (ChargeReport, error) {
 		return rep, err
 	}
 
-	stdPath, err := ResolveStandardPath(m, opts.ManifestPath, standardsDir, opts.StandardPath)
+	stdPath, err := manifest.ResolveStandardPath(m, opts.ManifestPath, standardsDir, opts.StandardPath)
 	if err != nil {
 		return rep, err
 	}

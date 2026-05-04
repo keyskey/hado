@@ -58,7 +58,7 @@ evidence:
 func TestResolveStandardPathLogicalID(t *testing.T) {
 	m := manifest.Manifest{}
 	m.Standard.ID = "web-service"
-	p, err := ResolveStandardPath(m, "/repo/hado.yaml", "/repo/standards", "")
+	p, err := manifest.ResolveStandardPath(m, "/repo/hado.yaml", "/repo/standards", "")
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -71,7 +71,7 @@ HADO         = 出航前に「撃てる状態」を証明する readiness amplif
 ```text
 1. hado target … 照準（何を、どの基準で評価するかを manifest に書く）
    ターミナル上の **対話（プロンプト）** で、評価対象の service と適用する Readiness Standard を聞き、回答を **manifest に書き戻す**。
-   初回セットアップや基準の切り替えで使い、**変更は Git の diff としてレビュー**できる形に残す。
+   解決した Readiness Standard を読み、**その standard が要求するゲートに対応する `evidence` のプレースホルダー**（人間・`charge` が後から埋められるキー）を manifest にマージする。初回セットアップや基準の切り替えで使い、**変更は Git の diff としてレビュー**できる形に残す。
 
 2. hado charge … 充填（証跡を集め、manifest を埋める）
    **target で回収した値**と、manifest に **すでに書かれているサービスメタデータ**（リポジトリ URL、Datadog の APM service 名や service catalog 参照など）を入力にし、Readiness Standard に照らして **まだ埋まっていない evidence を自動で埋める**。
@@ -92,7 +92,7 @@ HADO         = 出航前に「撃てる状態」を証明する readiness amplif
 - **フラグでの `target`:** 対話なしで `--manifest` / `--standard` / `--service` だけ更新するモードも用意できる（スクリプト・自動化向け）。
 - `--standard` には **短い alias** を許してもよい（例: `exchange-critical` → `ec`）。組織の運用に合わせて定義する。
 
-**実装との関係:** 現リポジトリでは **`hado target`** が manifest の `service` / `standard` を書き込める。**`hado charge`** は coverage について **plan / gap / apply**（`internal/charge`）の MVP を実装済み。判定は **`hado evaluate`** が一括で行う。将来は `evaluate` を **`fire` のエイリアス**にする、`evaluate` にフェーズ選択を付ける、など実装で決める。いずれにせよ **論理フェーズは target → charge → fire** とドキュメントで固定する。
+**実装との関係:** 現リポジトリでは **`hado target`** が manifest の `service` / `standard` と **standard 由来の evidence プレースホルダー**を書き込める。**`hado charge`** は coverage について **plan / gap / apply**（`internal/charge`）の MVP を実装済み。判定は **`hado evaluate`** が一括で行う（`PLACEHOLDER` は未設定として扱う）。将来は `evaluate` を **`fire` のエイリアス**にする、`evaluate` にフェーズ選択を付ける、など実装で決める。いずれにせよ **論理フェーズは target → charge → fire** とドキュメントで固定する。
 
 詳細な責務分担・データの流れは [アーキテクチャ](architecture.md) を参照する。
 

@@ -97,14 +97,20 @@ func runEvaluate(args []string, stdout, stderr io.Writer) (int, error) {
 		metrics.C1CoveragePercent = coverageMetrics.C1Coverage
 	}
 	if hadoManifest != nil {
-		metrics.OperationsOwner = strings.TrimSpace(hadoManifest.Evidence.Operations.Owner)
-		metrics.OperationsRunbook = strings.TrimSpace(hadoManifest.Evidence.Operations.Runbook)
-		metrics.ObservabilitySLO = strings.TrimSpace(hadoManifest.Evidence.Observability.SLO)
-		metrics.ObservabilityMonitors = strings.TrimSpace(hadoManifest.Evidence.Observability.Monitors)
-		metrics.ObservabilityDashboard = strings.TrimSpace(hadoManifest.Evidence.Observability.Dashboard)
-		metrics.ReleaseRollbackPlan = strings.TrimSpace(hadoManifest.Evidence.Release.RollbackPlan)
-		metrics.ReleaseAutomationDeclared = hadoManifest.Evidence.Release.AutomationDeclared()
-		metrics.InfraDeploymentSpec = strings.TrimSpace(hadoManifest.Evidence.Infra.DeploymentSpec)
+		metrics.OperationsOwner = gate.ManifestEvidenceString(hadoManifest.Evidence.Operations.Owner)
+		metrics.OperationsRunbook = gate.ManifestEvidenceString(hadoManifest.Evidence.Operations.Runbook)
+		metrics.ObservabilitySLO = gate.ManifestEvidenceString(hadoManifest.Evidence.Observability.SLO)
+		metrics.ObservabilityMonitors = gate.ManifestEvidenceString(hadoManifest.Evidence.Observability.Monitors)
+		metrics.ObservabilityDashboard = gate.ManifestEvidenceString(hadoManifest.Evidence.Observability.Dashboard)
+		metrics.ReleaseRollbackPlan = gate.ManifestEvidenceString(hadoManifest.Evidence.Release.RollbackPlan)
+		metrics.InfraDeploymentSpec = gate.ManifestEvidenceString(hadoManifest.Evidence.Infra.DeploymentSpec)
+		metrics.ReleaseAutomationDeclared = false
+		for _, ref := range hadoManifest.Evidence.Release.Automation.WorkflowRefs {
+			if gate.ManifestEvidenceString(ref) != "" {
+				metrics.ReleaseAutomationDeclared = true
+				break
+			}
+		}
 	}
 
 	evaluation, err := gate.Evaluate(readinessStandard, metrics)
