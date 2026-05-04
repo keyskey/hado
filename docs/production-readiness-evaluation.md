@@ -141,7 +141,7 @@ gates:
 
 HADO は module output を Readiness Standard の gate と照合し、最終 decision を返す。
 
-**CLI フェーズとの対応（設計）:** **target** で「どの standard のどの gate に対応するか」を確定し、manifest に **evidence のスキャフォールド**を載せる。**charge** で evidence を揃えて正規化し、**fire** で照合と decision まで行う。現行の `hado evaluate` は **charge に相当する処理と fire を一括**で実行している。詳細は [概要](overview.md) と [アーキテクチャ](architecture.md) を参照する。
+**CLI フェーズとの対応:** **target** で「どの standard のどの gate に対応するか」を確定し、manifest に **evidence のスキャフォールド**を載せる。**charge** で evidence 参照（coverage artifact の adapter/path など）を不足分マージし、**fire** で照合と decision まで行う。`fire` は manifest を必須入力として判定のみを担当する。詳細は [概要](overview.md) と [アーキテクチャ](architecture.md) を参照する。
 
 ```text
 ready

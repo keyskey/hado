@@ -5,7 +5,8 @@ import (
 	"io"
 	"os"
 
-	evaluatecmd "github.com/keyskey/hado/cmd/hado/evaluate"
+	chargecmd "github.com/keyskey/hado/cmd/hado/charge"
+	firecmd "github.com/keyskey/hado/cmd/hado/fire"
 	targetcmd "github.com/keyskey/hado/cmd/hado/target"
 )
 
@@ -29,8 +30,10 @@ func run(args []string, stdout, stderr io.Writer) (int, error) {
 	case "version", "--version", "-v":
 		fmt.Fprintf(stdout, "hado %s\n", version)
 		return 0, nil
-	case "evaluate":
-		return evaluatecmd.Run(args[1:], stdout, stderr)
+	case "charge":
+		return chargecmd.Run(args[1:], stdout, stderr)
+	case "fire":
+		return firecmd.Run(args[1:], stdout, stderr)
 	case "target":
 		return targetcmd.Run(args[1:], os.Stdin, stdout, stderr)
 	default:
