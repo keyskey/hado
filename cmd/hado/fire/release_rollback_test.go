@@ -1,4 +1,4 @@
-package evaluate
+package fire
 
 import (
 	"bytes"
@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestEvaluateReadyWithReleaseRollbackPlan(t *testing.T) {
+func TestFireReadyWithReleaseRollbackPlan(t *testing.T) {
 	dir := t.TempDir()
 	standardPath := writeFile(t, dir, "standard.yaml", `id: test
 gates:
@@ -26,7 +26,7 @@ evidence:
 		"--manifest", manifestPath,
 	}, &stdout, &stderr)
 	if err != nil {
-		t.Fatalf("run evaluate: %v", err)
+		t.Fatalf("run fire: %v", err)
 	}
 	if exitCode != 0 {
 		t.Fatalf("exit code = %d, want 0", exitCode)
@@ -36,7 +36,7 @@ evidence:
 	}
 }
 
-func TestEvaluateBlocksWhenRollbackPlanMissing(t *testing.T) {
+func TestFireBlocksWhenRollbackPlanMissing(t *testing.T) {
 	dir := t.TempDir()
 	standardPath := writeFile(t, dir, "standard.yaml", `id: test
 gates:
@@ -54,7 +54,7 @@ evidence: {}
 		"--manifest", manifestPath,
 	}, &stdout, &stderr)
 	if err != nil {
-		t.Fatalf("run evaluate: %v", err)
+		t.Fatalf("run fire: %v", err)
 	}
 	if exitCode != 1 {
 		t.Fatalf("exit code = %d, want 1", exitCode)

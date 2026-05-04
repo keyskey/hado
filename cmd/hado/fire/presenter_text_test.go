@@ -1,4 +1,4 @@
-package evaluate
+package fire
 
 import (
 	"fmt"
@@ -45,6 +45,14 @@ func TestPrintTextEvaluationPrintsSummaryLastWithSeverityHints(t *testing.T) {
 	}
 	if !strings.HasSuffix(out, "\nHADO: BLOCKED\n") {
 		t.Fatalf("stdout = %q, want summary line at end", out)
+	}
+}
+
+func TestWrapColor(t *testing.T) {
+	t.Parallel()
+	want := fmt.Sprintf("%s%s%s", ansiGreen, "PASS", ansiReset)
+	if got := wrapColor("PASS", ansiGreen); got != want {
+		t.Fatalf("wrapColor() = %q, want %q", got, want)
 	}
 }
 
@@ -127,13 +135,5 @@ func TestColorizationHelpers(t *testing.T) {
 	}
 	if got := colorizedSummary("HADO: ERROR", gate.DecisionError, true); got != wrapColor("HADO: ERROR", ansiBoldMagenta) {
 		t.Fatalf("error summary = %q", got)
-	}
-}
-
-func TestWrapColor(t *testing.T) {
-	t.Parallel()
-	want := fmt.Sprintf("%s%s%s", ansiGreen, "PASS", ansiReset)
-	if got := wrapColor("PASS", ansiGreen); got != want {
-		t.Fatalf("wrapColor() = %q, want %q", got, want)
 	}
 }
