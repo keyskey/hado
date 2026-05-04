@@ -1,4 +1,4 @@
-package main
+package evaluate
 
 import (
 	"bytes"
@@ -11,6 +11,7 @@ func TestEvaluateReady(t *testing.T) {
 	standardPath := writeFile(t, dir, "standard.yaml", `id: test
 gates:
   - id: test.c0_coverage
+    severity: critical
     required: true
     threshold:
       min: 70
@@ -21,8 +22,7 @@ gates:
 
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
-	exitCode, err := run([]string{
-		"evaluate",
+	exitCode, err := Run([]string{
 		"--standard", standardPath,
 		"--coverage-input", "hado-json:" + metricsPath,
 	}, &stdout, &stderr)
@@ -46,6 +46,7 @@ gates:
     threshold:
       min: 70
   - id: test.c1_coverage
+    severity: critical
     required: true
     threshold:
       min: 65
@@ -57,8 +58,7 @@ gates:
 
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
-	exitCode, err := run([]string{
-		"evaluate",
+	exitCode, err := Run([]string{
 		"--standard", standardPath,
 		"--coverage-input", "hado-json:" + metricsPath,
 	}, &stdout, &stderr)
@@ -78,10 +78,12 @@ func TestEvaluateBlockedWithGobceAdapter(t *testing.T) {
 	standardPath := writeFile(t, dir, "standard.yaml", `id: test
 gates:
   - id: test.c0_coverage
+    severity: critical
     required: true
     threshold:
       min: 70
   - id: test.c1_coverage
+    severity: critical
     required: true
     threshold:
       min: 70
@@ -95,8 +97,7 @@ gates:
 
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
-	exitCode, err := run([]string{
-		"evaluate",
+	exitCode, err := Run([]string{
 		"--standard", standardPath,
 		"--coverage-input", "gobce-json:" + gobcePath,
 	}, &stdout, &stderr)
@@ -116,6 +117,7 @@ func TestEvaluateReadyWithGoCoverprofileAdapter(t *testing.T) {
 	standardPath := writeFile(t, dir, "standard.yaml", `id: test
 gates:
   - id: test.c0_coverage
+    severity: critical
     required: true
     threshold:
       min: 70
@@ -126,8 +128,7 @@ example.go:1.1,2.1 7 1
 
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
-	exitCode, err := run([]string{
-		"evaluate",
+	exitCode, err := Run([]string{
 		"--standard", standardPath,
 		"--coverage-input", "go-coverprofile:" + coverprofilePath,
 	}, &stdout, &stderr)
@@ -166,8 +167,7 @@ evidence:
 
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
-	exitCode, err := run([]string{
-		"evaluate",
+	exitCode, err := Run([]string{
 		"--standard", standardPath,
 		"--manifest", manifestPath,
 	}, &stdout, &stderr)
@@ -207,8 +207,7 @@ evidence:
 
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
-	exitCode, err := run([]string{
-		"evaluate",
+	exitCode, err := Run([]string{
 		"--standard", standardPath,
 		"--manifest", manifestPath,
 		"--coverage-input", "hado-json:" + cliMetricsPath,
@@ -233,7 +232,7 @@ gates:
 
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
-	exitCode, err := run([]string{"evaluate", "--standard", standardPath}, &stdout, &stderr)
+	exitCode, err := Run([]string{"--standard", standardPath}, &stdout, &stderr)
 	if err == nil {
 		t.Fatal("run evaluate error = nil, want missing coverage evidence error")
 	}
@@ -247,6 +246,7 @@ func TestEvaluateBlocked(t *testing.T) {
 	standardPath := writeFile(t, dir, "standard.yaml", `id: test
 gates:
   - id: test.c0_coverage
+    severity: critical
     required: true
     threshold:
       min: 80
@@ -258,8 +258,7 @@ example.go:3.1,4.1 3 0
 
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
-	exitCode, err := run([]string{
-		"evaluate",
+	exitCode, err := Run([]string{
 		"--standard", standardPath,
 		"--coverage-input", "go-coverprofile:" + coverprofilePath,
 	}, &stdout, &stderr)

@@ -1,4 +1,4 @@
-package main
+package evaluate
 
 import (
 	"bytes"
@@ -26,8 +26,7 @@ evidence:
 `)
 
 	var stdout, stderr bytes.Buffer
-	exitCode, err := run([]string{
-		"evaluate",
+	exitCode, err := Run([]string{
 		"--standard", standardPath,
 		"--manifest", manifestPath,
 	}, &stdout, &stderr)

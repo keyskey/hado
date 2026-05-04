@@ -1,4 +1,4 @@
-package main
+package target
 
 import (
 	"os"
@@ -14,7 +14,7 @@ func TestRunTargetNonInteractiveWritesManifest(t *testing.T) {
 	manifestPath := filepath.Join(dir, "hado.yaml")
 	stdout := &strings.Builder{}
 	stderr := &strings.Builder{}
-	code, err := runTarget([]string{
+	code, err := Run([]string{
 		"--manifest", manifestPath,
 		"--service-name", "order-api",
 		"--service-id", "order-api",
@@ -60,7 +60,7 @@ evidence:
 	}
 	stdout := &strings.Builder{}
 	stderr := &strings.Builder{}
-	code, err := runTarget([]string{
+	code, err := Run([]string{
 		"--manifest", manifestPath,
 		"--standard-id", "critical-api",
 		"--rewrite-placeholders=false",
@@ -92,7 +92,7 @@ func TestRunTargetNonInteractiveRequiresField(t *testing.T) {
 	manifestPath := filepath.Join(dir, "hado.yaml")
 	stdout := &strings.Builder{}
 	stderr := &strings.Builder{}
-	_, err := runTarget([]string{"--manifest", manifestPath}, strings.NewReader(""), stdout, stderr)
+	_, err := Run([]string{"--manifest", manifestPath}, strings.NewReader(""), stdout, stderr)
 	if err == nil {
 		t.Fatal("want error when no service or standard")
 	}
@@ -121,7 +121,7 @@ gates:
 	manifestPath := filepath.Join(dir, "hado.yaml")
 	stdout := &strings.Builder{}
 	stderr := &strings.Builder{}
-	code, err := runTarget([]string{
+	code, err := Run([]string{
 		"--manifest", manifestPath,
 		"--service-name", "svc",
 		"--standard-id", "web-service",
@@ -162,7 +162,7 @@ gates:
 	manifestPath := filepath.Join(dir, "hado.yaml")
 	stdout := &strings.Builder{}
 	stderr := &strings.Builder{}
-	_, err := runTarget([]string{
+	_, err := Run([]string{
 		"--manifest", manifestPath,
 		"--service-name", "svc",
 		"--standard-id", "web-service",

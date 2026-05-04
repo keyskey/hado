@@ -1,4 +1,4 @@
-package main
+package evaluate
 
 import (
 	"bytes"
@@ -11,6 +11,7 @@ func TestEvaluateReadyWithReleaseAutomationDeclared(t *testing.T) {
 	standardPath := writeFile(t, dir, "standard.yaml", `id: test
 gates:
   - id: release.automation_declared
+    severity: critical
     required: true
 `)
 	manifestPath := writeFile(t, dir, "hado.yaml", `version: v1
@@ -24,8 +25,7 @@ evidence:
 `)
 
 	var stdout, stderr bytes.Buffer
-	exitCode, err := run([]string{
-		"evaluate",
+	exitCode, err := Run([]string{
 		"--standard", standardPath,
 		"--manifest", manifestPath,
 	}, &stdout, &stderr)
@@ -45,6 +45,7 @@ func TestEvaluateBlocksWhenReleaseAutomationMissing(t *testing.T) {
 	standardPath := writeFile(t, dir, "standard.yaml", `id: test
 gates:
   - id: release.automation_declared
+    severity: critical
     required: true
 `)
 	manifestPath := writeFile(t, dir, "hado.yaml", `version: v1
@@ -54,8 +55,7 @@ evidence:
 `)
 
 	var stdout, stderr bytes.Buffer
-	exitCode, err := run([]string{
-		"evaluate",
+	exitCode, err := Run([]string{
 		"--standard", standardPath,
 		"--manifest", manifestPath,
 	}, &stdout, &stderr)

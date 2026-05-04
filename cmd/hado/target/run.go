@@ -1,4 +1,4 @@
-package main
+package target
 
 import (
 	"bufio"
@@ -14,7 +14,7 @@ import (
 	"golang.org/x/term"
 )
 
-func runTarget(args []string, stdin io.Reader, stdout, stderr io.Writer) (int, error) {
+func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (int, error) {
 	fs := flag.NewFlagSet("target", flag.ContinueOnError)
 	fs.SetOutput(stderr)
 	manifestPath := fs.String("manifest", "", "path to HADO manifest YAML (created if missing)")
@@ -35,84 +35,21 @@ func runTarget(args []string, stdin io.Reader, stdout, stderr io.Writer) (int, e
 		return 2, err
 	}
 
-	name := strings.TrimSpace(*serviceName)
-	id := strings.TrimSpace(*serviceID)
-	stdID := strings.TrimSpace(*standardID)
-
-	useTTY := false
-	if f, ok := stdin.(*os.File); ok {
-		useTTY = term.IsTerminal(int(f.Fd()))
-	}
-
-	allFlagsEmpty := name == "" && id == "" && stdID == ""
-
-	if useTTY && allFlagsEmpty {
-		reader := bufio.NewReader(stdin)
-		var err error
-		name, err = promptLine(reader, stdout, "Service name", strings.TrimSpace(m.Service.Name))
-		if err != nil {
-			return 2, err
-		}
-		defID := strings.TrimSpace(m.Service.ID)
-		if defID == "" {
-			defID = name
-		}
-		id, err = promptOptionalLine(reader, stdout, "Service id (optional, Enter = same as name)", defID, name)
-		if err != nil {
-			return 2, err
-		}
-		stdID, err = promptLine(reader, stdout, "Readiness standard id or path", strings.TrimSpace(m.Standard.ID))
-		if err != nil {
-			return 2, err
-		}
-	} else if !useTTY {
-		if allFlagsEmpty {
-			return 2, fmt.Errorf("target: non-interactive mode requires at least one of --service-name, --service-id, --standard-id")
-		}
-		if name == "" {
-			name = strings.TrimSpace(m.Service.Name)
-		}
-		if id == "" {
-			id = strings.TrimSpace(m.Service.ID)
-		}
-		if stdID == "" {
-			stdID = strings.TrimSpace(m.Standard.ID)
-		}
-	} else {
-		if name == "" {
-			name = strings.TrimSpace(m.Service.Name)
-		}
-		if id == "" {
-			id = strings.TrimSpace(m.Service.ID)
-		}
-		if stdID == "" {
-			stdID = strings.TrimSpace(m.Standard.ID)
-		}
-	}
-
-	name = strings.TrimSpace(name)
-	id = strings.TrimSpace(id)
-	stdID = strings.TrimSpace(stdID)
-
-	if stdID == "" {
-		return 2, fmt.Errorf("target: readiness standard id is required (set in manifest or pass --standard-id)")
-	}
-	if name == "" && id == "" {
-		return 2, fmt.Errorf("target: service name or service id is required (set in manifest or pass --service-name / --service-id)")
-	}
-	if id == "" {
-		id = name
-	}
-	if name == "" {
-		name = id
+	selection, err := resolveTargetSelection(stdin, stdout, m, targetSelectionInput{
+		ServiceName: *serviceName,
+		ServiceID:   *serviceID,
+		StandardID:  *standardID,
+	})
+	if err != nil {
+		return 2, err
 	}
 
 	if m.Version == "" {
 		m.Version = "v1"
 	}
-	m.Service.Name = name
-	m.Service.ID = id
-	m.Standard.ID = stdID
+	m.Service.Name = selection.ServiceName
+	m.Service.ID = selection.ServiceID
+	m.Standard.ID = selection.StandardID
 
 	stdDir := *standardsDir
 	if stdDir == "" {
@@ -136,10 +73,90 @@ func runTarget(args []string, stdin io.Reader, stdout, stderr io.Writer) (int, e
 	}
 	fmt.Fprintf(stdout, "Wrote manifest %s (service %q, standard %q", *manifestPath, m.Service.Name, m.Standard.ID)
 	if *rewritePlaceholders {
-		fmt.Fprintf(stdout, ", evidence scaffold merged from standard")
+		fmt.Fprint(stdout, ", evidence scaffold merged from standard")
 	}
 	fmt.Fprintln(stdout, ")")
 	return 0, nil
+}
+
+type targetSelectionInput struct {
+	ServiceName string
+	ServiceID   string
+	StandardID  string
+}
+
+type targetSelection struct {
+	ServiceName string
+	ServiceID   string
+	StandardID  string
+}
+
+func resolveTargetSelection(stdin io.Reader, stdout io.Writer, m manifest.Manifest, input targetSelectionInput) (targetSelection, error) {
+	name := strings.TrimSpace(input.ServiceName)
+	id := strings.TrimSpace(input.ServiceID)
+	stdID := strings.TrimSpace(input.StandardID)
+
+	useTTY := false
+	if f, ok := stdin.(*os.File); ok {
+		useTTY = term.IsTerminal(int(f.Fd()))
+	}
+
+	allFlagsEmpty := name == "" && id == "" && stdID == ""
+	if useTTY && allFlagsEmpty {
+		reader := bufio.NewReader(stdin)
+		var err error
+		name, err = promptLine(reader, stdout, "Service name", strings.TrimSpace(m.Service.Name))
+		if err != nil {
+			return targetSelection{}, err
+		}
+		defID := strings.TrimSpace(m.Service.ID)
+		if defID == "" {
+			defID = name
+		}
+		id, err = promptOptionalLine(reader, stdout, "Service id (optional, Enter = same as name)", defID, name)
+		if err != nil {
+			return targetSelection{}, err
+		}
+		stdID, err = promptLine(reader, stdout, "Readiness standard id or path", strings.TrimSpace(m.Standard.ID))
+		if err != nil {
+			return targetSelection{}, err
+		}
+	} else {
+		if !useTTY && allFlagsEmpty {
+			return targetSelection{}, fmt.Errorf("target: non-interactive mode requires at least one of --service-name, --service-id, --standard-id")
+		}
+		if name == "" {
+			name = strings.TrimSpace(m.Service.Name)
+		}
+		if id == "" {
+			id = strings.TrimSpace(m.Service.ID)
+		}
+		if stdID == "" {
+			stdID = strings.TrimSpace(m.Standard.ID)
+		}
+	}
+
+	name = strings.TrimSpace(name)
+	id = strings.TrimSpace(id)
+	stdID = strings.TrimSpace(stdID)
+	if stdID == "" {
+		return targetSelection{}, fmt.Errorf("target: readiness standard id is required (set in manifest or pass --standard-id)")
+	}
+	if name == "" && id == "" {
+		return targetSelection{}, fmt.Errorf("target: service name or service id is required (set in manifest or pass --service-name / --service-id)")
+	}
+	if id == "" {
+		id = name
+	}
+	if name == "" {
+		name = id
+	}
+
+	return targetSelection{
+		ServiceName: name,
+		ServiceID:   id,
+		StandardID:  stdID,
+	}, nil
 }
 
 func promptLine(reader *bufio.Reader, stdout io.Writer, label, defaultValue string) (string, error) {
@@ -158,7 +175,7 @@ func promptLine(reader *bufio.Reader, stdout io.Writer, label, defaultValue stri
 			if defaultValue != "" {
 				return defaultValue, nil
 			}
-			fmt.Fprintf(stdout, "Value is required.\n")
+			fmt.Fprintln(stdout, "Value is required.")
 			continue
 		}
 		return line, nil
