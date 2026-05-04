@@ -21,6 +21,9 @@ evidence:
 		t.Fatalf("Load() error = %v", err)
 	}
 
+	if hadoManifest.Evidence.Release == nil {
+		t.Fatal("release evidence is nil")
+	}
 	if got := hadoManifest.Evidence.Release.RollbackPlan; got != "docs/rollback.md" {
 		t.Fatalf("release.rollback_plan = %q", got)
 	}
