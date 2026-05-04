@@ -30,13 +30,13 @@ type Metrics struct {
 
 // Result captures a single gate evaluation.
 type Result struct {
-	ID          string  `json:"id"`
-	Passed      bool    `json:"passed"`
-	Required    bool    `json:"required"`
+	ID          string            `json:"id"`
+	Passed      bool              `json:"passed"`
+	Required    bool              `json:"required"`
 	Severity    standard.Severity `json:"severity"`
-	Actual      float64 `json:"actual,omitempty"`
-	RequiredMin float64 `json:"requiredMin,omitempty"`
-	Message     string  `json:"message"`
+	Actual      float64           `json:"actual,omitempty"`
+	RequiredMin float64           `json:"requiredMin,omitempty"`
+	Message     string            `json:"message"`
 }
 
 // Evaluation is the machine-readable readiness decision.
