@@ -9,4 +9,4 @@ alwaysApply: true
 
 - `ManagePullRequest` で PR を作成・更新するとき、**title と body は日本語**にする（英語のテンプレートに合わせて英語だけにしない）。
 - 技術名・コマンド名・パス・識別子はそのままでよい。説明・背景・テスト内容・マージ後の注意は日本語の文で書く。
-- コミットメッセージの言語はこのルールでは固定しない（チーム規約に従う）。
+- **git のコミットメッセージ（subject / body）は英語**で書く。短い imperative 形（例: `Add foo for bar`）や Conventional Commits（`feat(scope): ...`）を推奨する。PR の説明とは別物として扱う。
