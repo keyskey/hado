@@ -31,9 +31,11 @@
 - `--coverage-input`（繰り返し可; `<adapter>:<path>`。**指定時は manifest の `evidence.coverage.inputs` より優先**）
 - `--output`：`text` または `json`（それ以外はエラー）
 
+`--output text` は各 gate の判定行に `severity` を表示し、FAIL 行には「リリース前に必須対応か / リリース後対応可か」の運用ヒントを併記する。総合判定（`HADO: READY/BLOCKED/ERROR`）は一覧の最後に出力する。TTY では ANSI カラーを付与し、`PASS` は緑、`FAIL` は赤/黄（required+critical の FAIL を最強調）で表示する（`NO_COLOR` が設定されている場合は無効）。
+
 **Coverage 入力の必須条件:** Readiness Standard が `test.c0_coverage` または `test.c1_coverage` のいずれかを含む場合、`--coverage-input` か manifest の `evidence.coverage.inputs` のどちらかが必要。どちらも無いと `evaluate` はエラー終了（exit 2）。
 
-終了コード: `0` = ready、`1` = blocked（required gate 失敗）、`2` = error（引数・読み込み・未対応 gate など）。
+終了コード: `0` = ready、`1` = blocked（`required: true` かつ `severity: critical` の gate が失敗）、`2` = error（引数・読み込み・未対応 gate など）。
 
 **未実装の例:** `--output markdown`、module runner、score / exception フィールド。
 
@@ -51,6 +53,22 @@ required として宣言されているが、ここに無い gate id は **error
 - `infra.deployment_spec_exists`（`evidence.infra.deployment_spec` が非空; パス・URL・カタログ ID などの参照文字列として扱う）
 - `release.rollback_plan_exists`（`evidence.release.rollback_plan` が非空）
 - `release.automation_declared`（`evidence.release.automation.workflow_refs` に **空白以外**の文字列が **1 件以上**。`systems` は任意のメタデータで現ゲートでは未使用）
+
+### Gate severity（現状）
+
+`severity` は `internal/standard/types.go` の独自型 `Severity` として扱い、次の 3 値へ制限する（未知値は `standard.Load` でエラー）:
+
+- `critical`
+- `major`
+- `minor`
+
+`required: true` の gate が失敗した場合の扱い:
+
+- `critical`: **blocked**（原則リリース不可）
+- `major`: ready のまま（リリースは可能だが、リリース後の早期対応を要求する運用を想定）
+- `minor`: ready のまま（リリース可能。リリース後の任意タイミングでの対応を想定）
+
+`severity` 未指定は `minor` と同等に扱う（非ブロック）。
 
 ## Coverage adapter（`internal/coverage/parse.go` の `ParseAdapterInput`）
 

@@ -14,6 +14,7 @@ func TestEvaluateReadyWhenC0CoverageMeetsStandard(t *testing.T) {
 		Gates: []standard.Gate{
 			{
 				ID:       standard.C0CoverageGateID,
+				Severity: standard.SeverityCritical,
 				Required: true,
 				Threshold: standard.Threshold{
 					Min: &minimum,
@@ -44,6 +45,7 @@ func TestEvaluateBlockedWhenC0CoverageFallsBelowStandard(t *testing.T) {
 		Gates: []standard.Gate{
 			{
 				ID:       standard.C0CoverageGateID,
+				Severity: standard.SeverityCritical,
 				Required: true,
 				Threshold: standard.Threshold{
 					Min: &minimum,
@@ -71,6 +73,7 @@ func TestEvaluateReadyWhenC1CoverageMeetsStandard(t *testing.T) {
 		Gates: []standard.Gate{
 			{
 				ID:       standard.C1CoverageGateID,
+				Severity: standard.SeverityCritical,
 				Required: true,
 				Threshold: standard.Threshold{
 					Min: &minimum,
@@ -98,6 +101,7 @@ func TestEvaluateBlockedWhenC1CoverageFallsBelowStandard(t *testing.T) {
 		Gates: []standard.Gate{
 			{
 				ID:       standard.C1CoverageGateID,
+				Severity: standard.SeverityCritical,
 				Required: true,
 				Threshold: standard.Threshold{
 					Min: &minimum,

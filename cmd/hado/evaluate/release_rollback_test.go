@@ -1,4 +1,4 @@
-package main
+package evaluate
 
 import (
 	"bytes"
@@ -11,6 +11,7 @@ func TestEvaluateReadyWithReleaseRollbackPlan(t *testing.T) {
 	standardPath := writeFile(t, dir, "standard.yaml", `id: test
 gates:
   - id: release.rollback_plan_exists
+    severity: critical
     required: true
 `)
 	manifestPath := writeFile(t, dir, "hado.yaml", `version: v1
@@ -20,8 +21,7 @@ evidence:
 `)
 
 	var stdout, stderr bytes.Buffer
-	exitCode, err := run([]string{
-		"evaluate",
+	exitCode, err := Run([]string{
 		"--standard", standardPath,
 		"--manifest", manifestPath,
 	}, &stdout, &stderr)
@@ -41,6 +41,7 @@ func TestEvaluateBlocksWhenRollbackPlanMissing(t *testing.T) {
 	standardPath := writeFile(t, dir, "standard.yaml", `id: test
 gates:
   - id: release.rollback_plan_exists
+    severity: critical
     required: true
 `)
 	manifestPath := writeFile(t, dir, "hado.yaml", `version: v1
@@ -48,8 +49,7 @@ evidence: {}
 `)
 
 	var stdout, stderr bytes.Buffer
-	exitCode, err := run([]string{
-		"evaluate",
+	exitCode, err := Run([]string{
 		"--standard", standardPath,
 		"--manifest", manifestPath,
 	}, &stdout, &stderr)

@@ -1,6 +1,16 @@
 package standard
 
+// Severity is the importance level assigned to each gate.
+type Severity string
+
 const (
+	// SeverityCritical blocks release when a required gate fails.
+	SeverityCritical Severity = "critical"
+	// SeverityMajor does not block release but requires prompt follow-up.
+	SeverityMajor Severity = "major"
+	// SeverityMinor does not block release and can be addressed opportunistically.
+	SeverityMinor Severity = "minor"
+
 	// C0CoverageGateID is the gate id used for C0 statement coverage.
 	C0CoverageGateID = "test.c0_coverage"
 	// C1CoverageGateID is the gate id used for C1 condition coverage.
@@ -36,7 +46,7 @@ type Standard struct {
 // Gate is a single readiness check declared by a standard.
 type Gate struct {
 	ID        string    `yaml:"id" json:"id"`
-	Severity  string    `yaml:"severity" json:"severity"`
+	Severity  Severity  `yaml:"severity" json:"severity"`
 	Required  bool      `yaml:"required" json:"required"`
 	Threshold Threshold `yaml:"threshold" json:"threshold"`
 }

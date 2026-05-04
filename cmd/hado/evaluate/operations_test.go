@@ -1,4 +1,4 @@
-package main
+package evaluate
 
 import (
 	"bytes"
@@ -11,8 +11,10 @@ func TestEvaluateReadyWithManifestOperationsEvidence(t *testing.T) {
 	standardPath := writeFile(t, dir, "standard.yaml", `id: test
 gates:
   - id: operations.owner_exists
+    severity: critical
     required: true
   - id: operations.runbook_exists
+    severity: critical
     required: true
 `)
 	manifestPath := writeFile(t, dir, "hado.yaml", `version: v1
@@ -24,8 +26,7 @@ evidence:
 
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
-	exitCode, err := run([]string{
-		"evaluate",
+	exitCode, err := Run([]string{
 		"--standard", standardPath,
 		"--manifest", manifestPath,
 	}, &stdout, &stderr)
@@ -45,8 +46,10 @@ func TestEvaluateBlocksWhenOperationsEvidenceIsMissing(t *testing.T) {
 	standardPath := writeFile(t, dir, "standard.yaml", `id: test
 gates:
   - id: operations.owner_exists
+    severity: critical
     required: true
   - id: operations.runbook_exists
+    severity: critical
     required: true
 `)
 	manifestPath := writeFile(t, dir, "hado.yaml", `version: v1
@@ -57,8 +60,7 @@ evidence:
 
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
-	exitCode, err := run([]string{
-		"evaluate",
+	exitCode, err := Run([]string{
 		"--standard", standardPath,
 		"--manifest", manifestPath,
 	}, &stdout, &stderr)

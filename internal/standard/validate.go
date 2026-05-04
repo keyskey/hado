@@ -14,6 +14,9 @@ func (s Standard) Validate() error {
 		if gate.ID == "" {
 			return fmt.Errorf("gate %d id is required", i)
 		}
+		if err := gate.Severity.Validate(); err != nil {
+			return fmt.Errorf("gate %d: %w", i, err)
+		}
 		if isCoverageGate(gate.ID) && gate.Threshold.Min == nil {
 			return fmt.Errorf("%s gate requires threshold.min", gate.ID)
 		}
@@ -34,4 +37,17 @@ func (s Standard) RequiresGate(id string) bool {
 
 func isCoverageGate(id string) bool {
 	return id == C0CoverageGateID || id == C1CoverageGateID
+}
+
+// Validate checks whether severity is one of the supported enum values.
+// Empty severity is allowed and treated as default (minor) elsewhere.
+func (severity Severity) Validate() error {
+	switch severity {
+	case "":
+		return nil
+	case SeverityCritical, SeverityMajor, SeverityMinor:
+		return nil
+	default:
+		return fmt.Errorf("severity %q is unsupported", severity)
+	}
 }
