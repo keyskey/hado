@@ -19,6 +19,7 @@ func TestRunTargetNonInteractiveWritesManifest(t *testing.T) {
 		"--service-name", "order-api",
 		"--service-id", "order-api",
 		"--standard-id", "web-service",
+		"--rewrite-placeholders=false",
 	}, strings.NewReader(""), stdout, stderr)
 	if err != nil {
 		t.Fatalf("runTarget() err = %v", err)
@@ -62,6 +63,7 @@ evidence:
 	code, err := runTarget([]string{
 		"--manifest", manifestPath,
 		"--standard-id", "critical-api",
+		"--rewrite-placeholders=false",
 	}, strings.NewReader(""), stdout, stderr)
 	if err != nil {
 		t.Fatalf("runTarget() err = %v", err)
@@ -93,5 +95,88 @@ func TestRunTargetNonInteractiveRequiresField(t *testing.T) {
 	_, err := runTarget([]string{"--manifest", manifestPath}, strings.NewReader(""), stdout, stderr)
 	if err == nil {
 		t.Fatal("want error when no service or standard")
+	}
+}
+
+func TestRunTargetWritesEvidencePlaceholders(t *testing.T) {
+	dir := t.TempDir()
+	stdDir := filepath.Join(dir, "standards")
+	if err := os.MkdirAll(stdDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	stdYAML := `id: web-service
+gates:
+  - id: test.c0_coverage
+    severity: major
+    required: true
+    threshold:
+      min: 80
+  - id: operations.owner_exists
+    severity: major
+    required: true
+`
+	if err := os.WriteFile(filepath.Join(stdDir, "web-service.yaml"), []byte(stdYAML), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	manifestPath := filepath.Join(dir, "hado.yaml")
+	stdout := &strings.Builder{}
+	stderr := &strings.Builder{}
+	code, err := runTarget([]string{
+		"--manifest", manifestPath,
+		"--service-name", "svc",
+		"--standard-id", "web-service",
+		"--standards-dir", stdDir,
+	}, strings.NewReader(""), stdout, stderr)
+	if err != nil {
+		t.Fatalf("runTarget: %v", err)
+	}
+	if code != 0 {
+		t.Fatalf("code %d stderr %s", code, stderr.String())
+	}
+	m, err := manifest.Load(manifestPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(m.Evidence.Coverage.Inputs) == 0 {
+		t.Fatal("expected coverage placeholder input")
+	}
+	if m.Evidence.Operations.Owner != manifest.EvidencePlaceholder {
+		t.Fatalf("owner = %q", m.Evidence.Operations.Owner)
+	}
+}
+
+func TestRunTargetSkipsPlaceholdersWhenDisabled(t *testing.T) {
+	dir := t.TempDir()
+	stdDir := filepath.Join(dir, "standards")
+	if err := os.MkdirAll(stdDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(stdDir, "web-service.yaml"), []byte(`id: web-service
+gates:
+  - id: operations.owner_exists
+    severity: major
+    required: true
+`), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	manifestPath := filepath.Join(dir, "hado.yaml")
+	stdout := &strings.Builder{}
+	stderr := &strings.Builder{}
+	_, err := runTarget([]string{
+		"--manifest", manifestPath,
+		"--service-name", "svc",
+		"--standard-id", "web-service",
+		"--standards-dir", stdDir,
+		"--rewrite-placeholders=false",
+	}, strings.NewReader(""), stdout, stderr)
+	if err != nil {
+		t.Fatal(err)
+	}
+	m, err := manifest.Load(manifestPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(m.Evidence.Coverage.Inputs) != 0 {
+		t.Fatalf("expected no coverage inputs, got %+v", m.Evidence.Coverage.Inputs)
 	}
 }

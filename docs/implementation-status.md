@@ -8,7 +8,7 @@
 | --- | --- |
 | 引数なし | 一行ヘルプ |
 | `version` / `-v` / `--version` | 実装済み |
-| `target` | 実装済み（`--manifest` 必須。TTY では対話、非 TTY では `--service-name` / `--service-id` / `--standard-id` で更新。既存 manifest はマージ） |
+| `target` | 実装済み（`--manifest` 必須。TTY / フラグで `service` / `standard`。既定で resolved standard に応じ **evidence のプレースホルダー**をマージ。`manifest.EvidencePlaceholder` と空は未入力扱いで `evaluate` も同様） |
 | `charge` | 実装済み（coverage MVP: `internal/charge` の **plan → gap → apply**。`--apply` で `go-gobce` プリセットのみ） |
 | `evaluate` | 実装済み（設計上は `fire` に相当する判定を、当面は一括で実行） |
 
@@ -31,6 +31,10 @@
 - `--service-name`（任意; 非 TTY では既存 manifest かフラグのどちらかが必要）
 - `--service-id`（任意; 空のときは `service-name` と同じにできる）
 - `--standard-id`（任意; 非 TTY では既存 manifest かフラグのどちらかが必要）
+- `--standards-dir`（任意; プレースホルダー用の standard YAML を探すディレクトリ。既定は manifest と同じ階層の `standards/`）
+- `--rewrite-placeholders`（既定 `true`。`false` で service/standard のみ更新し evidence は触らない）
+
+`evaluate` は manifest の文字列が **`PLACEHOLDER`**（`manifest.EvidencePlaceholder`）または空のとき、該当 evidence は **未設定**として existence gate を評価します。
 
 `evaluate` の主なフラグ（`cmd/hado/main.go` の `runEvaluate`）:
 

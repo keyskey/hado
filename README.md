@@ -36,7 +36,7 @@ make build
 
 ## Target manifest（service / standard）
 
-`hado target` は、HADO Manifest に **評価対象の service** と **適用する Readiness Standard** を書き込む。対話モード（TTY）ではプロンプトで聞き、非対話（CI）ではフラグで更新する。既存の `evidence` ブロックは上書きしない。
+`hado target` は、HADO Manifest に **評価対象の service** と **適用する Readiness Standard** を書き込み、**解決した standard に含まれるゲート**に対応する `evidence` フィールドへ **`PLACEHOLDER`**（または coverage のひな形 `hado-json` + `coverage-metrics.json`）を **マージ**します。既に値があるフィールドは上書きしません（`--rewrite-placeholders=false` でプレースホルダー挿入をスキップ可能）。`standards/<standard-id>.yaml` は `--standards-dir` または manifest 隣の `standards/` に置きます。
 
 ```bash
 ./bin/hado target --manifest hado.yaml \

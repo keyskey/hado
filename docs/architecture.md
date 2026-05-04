@@ -165,7 +165,7 @@ hado fire --manifest hado.yaml --standard ...
 JSON / Markdown / GitHub PR comment / CI exit code を出力（デプロイは行わない）
 ```
 
-**`internal/charge`（coverage MVP）:** Readiness Standard を読み、**PlanCoverage**（必要な C0/C1）→ **GapCoverage**（manifest の `evidence.coverage.inputs` が計画を満たすか）→ **ApplyCoverageGoGobce**（`--apply` 時のみ `go test` + `gobce analyze` で manifest を更新）の順で実行する。CLI は `hado charge`（`cmd/hado/charge.go`）が `charge.RunCoverage` を呼ぶ。将来の SaaS / module は **Apply** を差し替え可能な境界として同パッケージに追加する。
+**`internal/charge`（coverage MVP）:** Readiness Standard を読み、**PlanCoverage**（必要な C0/C1）→ **GapCoverage**（manifest の `evidence.coverage.inputs` が計画を満たすか）→ **ApplyCoverageGoGobce**（`--apply` 時のみ `go test` + `gobce analyze` で manifest を更新）の順で実行する。CLI は `hado charge`（`cmd/hado/charge.go`）が `charge.RunCoverage` を呼ぶ。`hado target` は **`internal/manifest` の `ApplyEvidencePlaceholders`** で standard に応じた evidence ひな形をマージする。将来の SaaS / module は **charge の Apply** を差し替え可能な境界として `internal/charge` に追加する。
 
 **現行実装（`hado evaluate`）との関係:** いまのコードパスは、上記の **manifest / standard の読み込み + charge に相当する coverage 解決 + fire に相当する gate 評価**を **1 コマンド**にまとめている。将来、フェーズ分割を実装するときの「分解点」は次のイメージで固定する。
 
