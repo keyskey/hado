@@ -41,7 +41,7 @@ make setup-hooks
 
 Go は **PATH 上の `go`** か **`make` が参照する `.tools/go`**（`bootstrap-go` 済み）があればよい。Docker が起動している必要がある（YAML / Markdown lint 用）。
 
-CI の [Test ワークフロー](https://github.com/keyskey/hado/blob/main/.github/workflows/test.yml) は `setup` のあと `readiness-check`（coverage・gobce・evaluate）を実行する。ローカルで合わせるときは `make readiness-check`（事前に `make setup`）。
+CI の [Test ワークフロー](https://github.com/keyskey/hado/blob/main/.github/workflows/test.yml) は `setup` のあと `readiness-check`（coverage・gobce・fire）を実行する。ローカルで合わせるときは `make readiness-check`（事前に `make setup`）。
 
 無効にする場合: `git config --unset core.hooksPath`（またはリポジトリの config から該当行を削除）。
 

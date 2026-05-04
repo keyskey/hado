@@ -28,7 +28,7 @@ help:
 	@echo "  make fmt          # Format Go source files"
 	@echo "  make fmt-check    # Used in make ci-lint (does not run go test)"
 	@echo "  make test         # Run Go tests"
-	@echo "  make readiness-check # Generate HADO coverage evidence and evaluate readiness"
+	@echo "  make readiness-check # Generate HADO coverage evidence and run charge/fire"
 	@echo "  make ci-lint      # fmt-check + lint (GitHub Lint job + pre-push; no go test)"
 	@echo "  make setup-hooks  # pre-push runs: make ci-lint"
 	@echo "  make pre-pr       # ci-lint + test (local only; go test also runs in CI via readiness-check)"
@@ -127,7 +127,7 @@ readiness-check: ensure-go
 	@command -v "$(GOBCE)" >/dev/null 2>&1 || { echo "gobce is required. Run: make setup"; exit 1; }
 	$(GO_CMD) test ./... -coverprofile="$(COVERPROFILE)"
 	"$(GOBCE)" analyze --coverprofile "$(COVERPROFILE)" --format json --output "$(READINESS_COVERAGE)"
-	$(GO_CMD) run ./cmd/hado evaluate --standard "$(READINESS_STANDARD)" --manifest "$(READINESS_MANIFEST)"
+	$(GO_CMD) run ./cmd/hado fire --standard "$(READINESS_STANDARD)" --manifest "$(READINESS_MANIFEST)"
 
 pre-pr: ci-lint test
 	@echo "pre-pr: OK."
