@@ -9,9 +9,10 @@
 | 引数なし | 一行ヘルプ |
 | `version` / `-v` / `--version` | 実装済み |
 | `target` | 実装済み（`--manifest` 必須。TTY / フラグで `service` / `standard`。既定で resolved standard に応じ **evidence のスキャフォールド**（空文字のキーなど）をマージ） |
-| `evaluate` | 実装済み（設計上は `fire` に相当する判定を、当面は一括で実行） |
+| `charge` | 実装済み（`--manifest` 必須。coverage artifact の adapter/path を manifest `evidence.coverage.inputs` に不足分マージ。既存値は置換しない） |
+| `fire` | 実装済み（`--manifest` 必須。判定専用。manifest の evidence を gate 評価して READY/BLOCKED/ERROR を返す） |
 
-**設計（未実装）:** `hado charge`（manifest メタデータから evidence を自動補完）/ `hado fire`（判定のみ）の 2 段階は [overview.md](overview.md) と [architecture.md](architecture.md) に記載。実装時は本表を更新する。
+`evaluate` は廃止し、`target` / `charge` / `fire` に一本化した。
 
 `target` の主なフラグ（`cmd/hado/target.go` の `runTarget`）:
 
@@ -22,18 +23,23 @@
 - `--standards-dir`（任意; スキャフォールド用の standard YAML を探すディレクトリ。既定は manifest と同じ階層の `standards/`）
 - `--rewrite-placeholders`（既定 `true`。`false` で service/standard のみ更新し evidence は触らない）
 
-`evaluate` は manifest の該当フィールドが **空（前後の空白を除いた長さ 0）** のとき、existence gate では **未設定**として評価します。
+`fire` は manifest の該当フィールドが **空（前後の空白を除いた長さ 0）** のとき、existence gate では **未設定**として評価します。
 
-`evaluate` の主なフラグ（`cmd/hado/main.go` の `runEvaluate`）:
+`charge` の主なフラグ（`cmd/hado/charge/run.go`）:
 
-- `--standard`（必須）
-- `--manifest`（任意）
-- `--coverage-input`（繰り返し可; `<adapter>:<path>`。**指定時は manifest の `evidence.coverage.inputs` より優先**）
+- `--manifest`（必須）
+- `--standard`（任意。未指定時は manifest の `standard.id` を利用）
+- `--coverage-input`（繰り返し可; `<adapter>:<path>`。**指定時も既存 manifest 値は置換せず不足分だけマージ**）
+
+`fire` の主なフラグ（`cmd/hado/fire/run.go`）:
+
+- `--manifest`（必須）
+- `--standard`（任意。未指定時は manifest の `standard.id` を利用、指定時は上書き）
 - `--output`：`text` または `json`（それ以外はエラー）
 
 `--output text` は各 gate の判定行に `severity` を表示し、FAIL 行には「リリース前に必須対応か / リリース後対応可か」の運用ヒントを併記する。総合判定（`HADO: READY/BLOCKED/ERROR`）は一覧の最後に出力する。TTY では ANSI カラーを付与し、`PASS` は緑、`FAIL` は赤/黄（required+critical の FAIL を最強調）で表示する（`NO_COLOR` が設定されている場合は無効）。
 
-**Coverage 入力の必須条件:** Readiness Standard が `test.c0_coverage` または `test.c1_coverage` のいずれかを含む場合、`--coverage-input` か manifest の `evidence.coverage.inputs` のどちらかが必要。どちらも無いと `evaluate` はエラー終了（exit 2）。
+**Coverage 入力の必須条件:** Readiness Standard が `test.c0_coverage` または `test.c1_coverage` のいずれかを含む場合、`charge` で `--coverage-input` を渡すか、manifest の `evidence.coverage.inputs` が必要。`fire` 実行時にどちらも無いとエラー終了（exit 2）。
 
 終了コード: `0` = ready、`1` = blocked（`required: true` かつ `severity: critical` の gate が失敗）、`2` = error（引数・読み込み・未対応 gate など）。
 

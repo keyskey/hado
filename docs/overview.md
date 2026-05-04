@@ -92,7 +92,7 @@ HADO         = 出航前に「撃てる状態」を証明する readiness amplif
 - **フラグでの `target`:** 対話なしで `--manifest` / `--standard` / `--service` だけ更新するモードも用意できる（スクリプト・自動化向け）。
 - `--standard` には **短い alias** を許してもよい（例: `exchange-critical` → `ec`）。組織の運用に合わせて定義する。
 
-**実装との関係:** 現リポジトリでは **`hado target`** が manifest の `service` / `standard` と **standard 由来の evidence スキャフォールド**を書き込める。判定は **`hado evaluate`** が一括で行う（空の evidence は未設定として扱う）。**`hado charge`** は [概要](overview.md) と [アーキテクチャ](architecture.md) で設計中。将来は `evaluate` を **`fire` のエイリアス**にする、`evaluate` にフェーズ選択を付ける、など実装で決める。いずれにせよ **論理フェーズは target → charge → fire** とドキュメントで固定する。
+**実装との関係:** 現リポジトリは **`hado target` / `hado charge` / `hado fire`** を正とする。`target` は manifest の `service` / `standard` と **standard 由来の evidence スキャフォールド**を書き込み、`charge` は evidence 参照（coverage artifact の adapter/path など）を不足分マージし、`fire` は manifest を入力に gate 判定のみを行う。`fire` は `--standard` 未指定時に manifest の `standard.id` を使い、指定時はそれを上書きする。
 
 詳細な責務分担・データの流れは [アーキテクチャ](architecture.md) を参照する。
 
