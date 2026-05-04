@@ -22,12 +22,13 @@ type StandardRef struct {
 }
 
 // Evidence groups evidence declarations by readiness domain.
+// Sub-blocks are pointers so an empty scaffold (e.g. operations with only empty strings) still serializes under evidence.
 type Evidence struct {
-	Coverage      CoverageEvidence      `yaml:"coverage,omitempty" json:"coverage,omitempty"`
-	Operations    OperationsEvidence    `yaml:"operations,omitempty" json:"operations,omitempty"`
-	Observability ObservabilityEvidence `yaml:"observability,omitempty" json:"observability,omitempty"`
-	Infra         InfraEvidence         `yaml:"infra,omitempty" json:"infra,omitempty"`
-	Release       ReleaseEvidence       `yaml:"release,omitempty" json:"release,omitempty"`
+	Coverage      *CoverageEvidence      `yaml:"coverage,omitempty" json:"coverage,omitempty"`
+	Operations    *OperationsEvidence    `yaml:"operations,omitempty" json:"operations,omitempty"`
+	Observability *ObservabilityEvidence `yaml:"observability,omitempty" json:"observability,omitempty"`
+	Infra         *InfraEvidence         `yaml:"infra,omitempty" json:"infra,omitempty"`
+	Release       *ReleaseEvidence       `yaml:"release,omitempty" json:"release,omitempty"`
 }
 
 // CoverageEvidence declares coverage reports and the adapters that parse them.
@@ -69,5 +70,5 @@ type ReleaseEvidence struct {
 // Systems (e.g. github_actions, circleci, argo_workflow) are optional metadata for tooling; phase-1 gates use workflow_refs only.
 type ReleaseAutomationEvidence struct {
 	WorkflowRefs []string `yaml:"workflow_refs" json:"workflow_refs,omitempty"`
-	Systems      []string `yaml:"systems" json:"systems,omitempty"`
+	Systems      []string `yaml:"systems,omitempty" json:"systems,omitempty"`
 }

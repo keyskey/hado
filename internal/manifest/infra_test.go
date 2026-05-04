@@ -21,6 +21,9 @@ evidence:
 		t.Fatalf("Load() error = %v", err)
 	}
 
+	if hadoManifest.Evidence.Infra == nil {
+		t.Fatal("infra evidence is nil")
+	}
 	if got := hadoManifest.Evidence.Infra.DeploymentSpec; got != "deploy/" {
 		t.Fatalf("infra.deployment_spec = %q", got)
 	}

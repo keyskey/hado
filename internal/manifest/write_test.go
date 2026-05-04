@@ -26,7 +26,7 @@ func TestSaveRoundTripServiceAndStandard(t *testing.T) {
 		Service:  Service{Name: "svc", ID: "svc"},
 		Standard: StandardRef{ID: "web-service"},
 		Evidence: Evidence{
-			Operations: OperationsEvidence{Owner: "o"},
+			Operations: &OperationsEvidence{Owner: "o"},
 		},
 	}
 	if err := m.Save(path); err != nil {
@@ -39,8 +39,8 @@ func TestSaveRoundTripServiceAndStandard(t *testing.T) {
 	if loaded.Service != m.Service || loaded.Standard != m.Standard {
 		t.Fatalf("loaded service/standard = %+v / %+v", loaded.Service, loaded.Standard)
 	}
-	if loaded.Evidence.Operations.Owner != "o" {
-		t.Fatalf("operations owner = %q", loaded.Evidence.Operations.Owner)
+	if loaded.Evidence.Operations == nil || loaded.Evidence.Operations.Owner != "o" {
+		t.Fatalf("operations owner = %+v", loaded.Evidence.Operations)
 	}
 }
 

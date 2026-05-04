@@ -59,6 +59,9 @@ evidence:
 		t.Fatalf("Load() error = %v", err)
 	}
 
+	if hadoManifest.Evidence.Operations == nil {
+		t.Fatal("operations evidence is nil")
+	}
 	if hadoManifest.Evidence.Operations.Owner != "platform-team" {
 		t.Fatalf("operations owner = %q, want platform-team", hadoManifest.Evidence.Operations.Owner)
 	}
@@ -82,6 +85,9 @@ func TestLoadProjectManifest(t *testing.T) {
 	}
 	if filepath.Base(inputs[0].Path) != "hado-coverage.json" {
 		t.Fatalf("coverage input path = %q, want hado-coverage.json", inputs[0].Path)
+	}
+	if hadoManifest.Evidence.Operations == nil {
+		t.Fatal("operations evidence is nil")
 	}
 	if hadoManifest.Evidence.Operations.Owner != "keyskey" {
 		t.Fatalf("operations owner = %q, want keyskey", hadoManifest.Evidence.Operations.Owner)

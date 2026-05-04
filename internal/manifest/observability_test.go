@@ -23,6 +23,9 @@ evidence:
 		t.Fatalf("Load() error = %v", err)
 	}
 
+	if hadoManifest.Evidence.Observability == nil {
+		t.Fatal("observability evidence is nil")
+	}
 	if got := hadoManifest.Evidence.Observability.SLO; got != "slo.yaml" {
 		t.Fatalf("observability.slo = %q", got)
 	}

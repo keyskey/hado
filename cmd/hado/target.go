@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/keyskey/hado/internal/manifest"
+	"github.com/keyskey/hado/internal/standard"
 	"golang.org/x/term"
 )
 
@@ -19,6 +21,8 @@ func runTarget(args []string, stdin io.Reader, stdout, stderr io.Writer) (int, e
 	serviceName := fs.String("service-name", "", "service display name")
 	serviceID := fs.String("service-id", "", "service id slug (defaults to service-name when empty after merge)")
 	standardID := fs.String("standard-id", "", "Readiness Standard id (e.g. web-service) or path to standard YAML")
+	standardsDir := fs.String("standards-dir", "", "directory containing <id>.yaml standards (default: <manifest-dir>/standards)")
+	rewritePlaceholders := fs.Bool("rewrite-placeholders", true, "merge evidence scaffold (empty values and coverage defaults) for gates in the resolved standard")
 	if err := fs.Parse(args); err != nil {
 		return 2, err
 	}
@@ -75,7 +79,6 @@ func runTarget(args []string, stdin io.Reader, stdout, stderr io.Writer) (int, e
 			stdID = strings.TrimSpace(m.Standard.ID)
 		}
 	} else {
-		// TTY but some flags set: flags override, keep manifest for omitted fields
 		if name == "" {
 			name = strings.TrimSpace(m.Service.Name)
 		}
@@ -111,10 +114,31 @@ func runTarget(args []string, stdin io.Reader, stdout, stderr io.Writer) (int, e
 	m.Service.ID = id
 	m.Standard.ID = stdID
 
+	stdDir := *standardsDir
+	if stdDir == "" {
+		stdDir = filepath.Join(filepath.Dir(*manifestPath), "standards")
+	}
+
+	if *rewritePlaceholders {
+		stdPath, err := manifest.ResolveStandardPath(m, *manifestPath, stdDir, "")
+		if err != nil {
+			return 2, err
+		}
+		st, err := standard.Load(stdPath)
+		if err != nil {
+			return 2, fmt.Errorf("load standard for evidence scaffold: %w", err)
+		}
+		manifest.ApplyEvidenceScaffold(&m, st, manifest.ApplyEvidenceScaffoldOptions{MergeOnly: true})
+	}
+
 	if err := m.Save(*manifestPath); err != nil {
 		return 2, err
 	}
-	fmt.Fprintf(stdout, "Wrote manifest %s (service %q, standard %q)\n", *manifestPath, m.Service.Name, m.Standard.ID)
+	fmt.Fprintf(stdout, "Wrote manifest %s (service %q, standard %q", *manifestPath, m.Service.Name, m.Standard.ID)
+	if *rewritePlaceholders {
+		fmt.Fprintf(stdout, ", evidence scaffold merged from standard")
+	}
+	fmt.Fprintln(stdout, ")")
 	return 0, nil
 }
 
@@ -141,7 +165,6 @@ func promptLine(reader *bufio.Reader, stdout io.Writer, label, defaultValue stri
 	}
 }
 
-// promptOptionalLine reads a line; empty input uses defaultIfEmpty, or if that is empty, fallbackSameAs.
 func promptOptionalLine(reader *bufio.Reader, stdout io.Writer, label, defaultIfEmpty, fallbackSameAs string) (string, error) {
 	fmt.Fprintf(stdout, "%s [%s]: ", label, defaultIfEmpty)
 	line, err := reader.ReadString('\n')
