@@ -8,7 +8,7 @@
 | --- | --- |
 | 引数なし | 一行ヘルプ |
 | `version` / `-v` / `--version` | 実装済み |
-| `target` | 実装済み（`--manifest` 必須。TTY では対話、非 TTY では `--service-name` / `--service-id` / `--standard-id` で更新。既存 manifest はマージ） |
+| `target` | 実装済み（`--manifest` 必須。TTY / フラグで `service` / `standard`。既定で resolved standard に応じ **evidence のプレースホルダー**をマージ。`manifest.EvidencePlaceholder` と空は未入力扱いで `evaluate` も同様） |
 | `evaluate` | 実装済み（設計上は `fire` に相当する判定を、当面は一括で実行） |
 
 **設計（未実装）:** `hado charge`（manifest メタデータから evidence を自動補完）/ `hado fire`（判定のみ）の 2 段階は [overview.md](overview.md) と [architecture.md](architecture.md) に記載。実装時は本表を更新する。
@@ -19,6 +19,10 @@
 - `--service-name`（任意; 非 TTY では既存 manifest かフラグのどちらかが必要）
 - `--service-id`（任意; 空のときは `service-name` と同じにできる）
 - `--standard-id`（任意; 非 TTY では既存 manifest かフラグのどちらかが必要）
+- `--standards-dir`（任意; プレースホルダー用の standard YAML を探すディレクトリ。既定は manifest と同じ階層の `standards/`）
+- `--rewrite-placeholders`（既定 `true`。`false` で service/standard のみ更新し evidence は触らない）
+
+`evaluate` は manifest の文字列が **`PLACEHOLDER`**（`manifest.EvidencePlaceholder`）または空のとき、該当 evidence は **未設定**として existence gate を評価します。
 
 `evaluate` の主なフラグ（`cmd/hado/main.go` の `runEvaluate`）:
 
@@ -46,7 +50,7 @@ required として宣言されているが、ここに無い gate id は **error
 - `observability.dashboard_exists`（`evidence.observability.dashboard` が非空）
 - `infra.deployment_spec_exists`（`evidence.infra.deployment_spec` が非空; パス・URL・カタログ ID などの参照文字列として扱う）
 - `release.rollback_plan_exists`（`evidence.release.rollback_plan` が非空）
-- `release.automation_declared`（`evidence.release.automation.workflow_refs` に TrimSpace 後に非空の要素が **1 件以上**。`systems` は任意のメタデータで現ゲートでは未使用）
+- `release.automation_declared`（`evidence.release.automation.workflow_refs` に **実値**（`PLACEHOLDER` 以外）の要素が **1 件以上**。`systems` は任意のメタデータで現ゲートでは未使用）
 
 ## Coverage adapter（`internal/coverage/parse.go` の `ParseAdapterInput`）
 
