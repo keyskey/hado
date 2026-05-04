@@ -110,4 +110,46 @@ func TestLoadCLIServiceStandard(t *testing.T) {
 	if !loaded.RequiresGate(OperationsRunbookExistsGateID) {
 		t.Fatal("cli-service standard should require operations runbook gate")
 	}
+	if !loaded.RequiresGate(ObservabilityMonitorExistsGateID) {
+		t.Fatal("cli-service standard should declare observability monitor gate")
+	}
+	if !loaded.RequiresGate(InfraDeploymentSpecExistsGateID) {
+		t.Fatal("cli-service standard should declare infra deployment spec gate")
+	}
+	if !loaded.RequiresGate(ReleaseRollbackPlanExistsGateID) {
+		t.Fatal("cli-service standard should declare release rollback plan gate")
+	}
+	if !loaded.RequiresGate(ReleaseAutomationDeclaredGateID) {
+		t.Fatal("cli-service standard should declare release automation gate")
+	}
+}
+
+func TestLoadWebServiceStandard(t *testing.T) {
+	t.Parallel()
+
+	loaded, err := Load("../../standards/web-service.yaml")
+	if err != nil {
+		t.Fatalf("Load() error = %v", err)
+	}
+	if loaded.ID != "web-service" {
+		t.Fatalf("ID = %q, want web-service", loaded.ID)
+	}
+	if !loaded.RequiresGate(ObservabilitySLOExistsGateID) {
+		t.Fatal("web-service standard should require observability SLO gate")
+	}
+	if !loaded.RequiresGate(ObservabilityMonitorExistsGateID) {
+		t.Fatal("web-service standard should require observability monitor gate")
+	}
+	if !loaded.RequiresGate(ObservabilityDashboardExistsGateID) {
+		t.Fatal("web-service standard should declare observability dashboard gate")
+	}
+	if !loaded.RequiresGate(InfraDeploymentSpecExistsGateID) {
+		t.Fatal("web-service standard should require infra deployment spec gate")
+	}
+	if !loaded.RequiresGate(ReleaseRollbackPlanExistsGateID) {
+		t.Fatal("web-service standard should require release rollback plan gate")
+	}
+	if !loaded.RequiresGate(ReleaseAutomationDeclaredGateID) {
+		t.Fatal("web-service standard should declare release automation gate")
+	}
 }

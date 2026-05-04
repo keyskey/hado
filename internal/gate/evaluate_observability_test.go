@@ -31,7 +31,7 @@ func TestEvaluateObservabilityBlockedWhenDashboardEmpty(t *testing.T) {
 	evaluation, err := Evaluate(standard.Standard{
 		ID: "test-standard",
 		Gates: []standard.Gate{
-			{ID: standard.ObservabilityDashboardExistsGateID, Required: true},
+			{ID: standard.ObservabilityDashboardExistsGateID, Severity: standard.SeverityCritical, Required: true},
 		},
 	}, Metrics{
 		ObservabilitySLO:       "ok",

@@ -11,6 +11,7 @@ func Evaluate(s standard.Standard, metrics Metrics) (Evaluation, error) {
 	evaluation := Evaluation{Status: DecisionReady}
 
 	for _, gate := range s.Gates {
+		resultCount := len(evaluation.Results)
 		switch gate.ID {
 		case standard.C0CoverageGateID:
 			if metrics.C0CoveragePercent == nil {
@@ -18,74 +19,54 @@ func Evaluate(s standard.Standard, metrics Metrics) (Evaluation, error) {
 			}
 			result := evaluateCoverageGate(gate, "C0 coverage", *metrics.C0CoveragePercent)
 			evaluation.Results = append(evaluation.Results, result)
-			if gate.Required && !result.Passed {
-				evaluation.Status = DecisionBlocked
-			}
 		case standard.C1CoverageGateID:
 			if metrics.C1CoveragePercent == nil {
 				return Evaluation{Status: DecisionError}, fmt.Errorf("%s gate requires c1Coverage evidence", standard.C1CoverageGateID)
 			}
 			result := evaluateCoverageGate(gate, "C1 coverage", *metrics.C1CoveragePercent)
 			evaluation.Results = append(evaluation.Results, result)
-			if gate.Required && !result.Passed {
-				evaluation.Status = DecisionBlocked
-			}
 		case standard.OperationsOwnerExistsGateID:
 			result := evaluateExistsGate(gate, metrics.OperationsOwner != "", "Operations owner is defined.", "Operations owner is not defined.")
 			evaluation.Results = append(evaluation.Results, result)
-			if gate.Required && !result.Passed {
-				evaluation.Status = DecisionBlocked
-			}
 		case standard.OperationsRunbookExistsGateID:
 			result := evaluateExistsGate(gate, metrics.OperationsRunbook != "", "Operations runbook is defined.", "Operations runbook is not defined.")
 			evaluation.Results = append(evaluation.Results, result)
-			if gate.Required && !result.Passed {
-				evaluation.Status = DecisionBlocked
-			}
 		case standard.ObservabilitySLOExistsGateID:
 			result := evaluateExistsGate(gate, metrics.ObservabilitySLO != "", "SLO / SLI evidence is defined.", "SLO / SLI evidence is not defined.")
 			evaluation.Results = append(evaluation.Results, result)
-			if gate.Required && !result.Passed {
-				evaluation.Status = DecisionBlocked
-			}
 		case standard.ObservabilityMonitorExistsGateID:
 			result := evaluateExistsGate(gate, metrics.ObservabilityMonitors != "", "Monitor evidence is defined.", "Monitor evidence is not defined.")
 			evaluation.Results = append(evaluation.Results, result)
-			if gate.Required && !result.Passed {
-				evaluation.Status = DecisionBlocked
-			}
 		case standard.ObservabilityDashboardExistsGateID:
 			result := evaluateExistsGate(gate, metrics.ObservabilityDashboard != "", "Dashboard evidence is defined.", "Dashboard evidence is not defined.")
 			evaluation.Results = append(evaluation.Results, result)
-			if gate.Required && !result.Passed {
-				evaluation.Status = DecisionBlocked
-			}
 		case standard.InfraDeploymentSpecExistsGateID:
 			result := evaluateExistsGate(gate, metrics.InfraDeploymentSpec != "", "Deployment spec reference is defined.", "Deployment spec reference is not defined.")
 			evaluation.Results = append(evaluation.Results, result)
-			if gate.Required && !result.Passed {
-				evaluation.Status = DecisionBlocked
-			}
 		case standard.ReleaseRollbackPlanExistsGateID:
 			result := evaluateExistsGate(gate, metrics.ReleaseRollbackPlan != "", "Rollback plan is defined.", "Rollback plan is not defined.")
 			evaluation.Results = append(evaluation.Results, result)
-			if gate.Required && !result.Passed {
-				evaluation.Status = DecisionBlocked
-			}
 		case standard.ReleaseAutomationDeclaredGateID:
 			result := evaluateExistsGate(gate, metrics.ReleaseAutomationDeclared, "Release automation workflows are declared.", "Release automation workflows are not declared (evidence.release.automation.workflow_refs).")
 			evaluation.Results = append(evaluation.Results, result)
-			if gate.Required && !result.Passed {
-				evaluation.Status = DecisionBlocked
-			}
 		default:
 			if gate.Required {
 				return Evaluation{Status: DecisionError}, fmt.Errorf("unsupported required gate %q", gate.ID)
 			}
 		}
+		if len(evaluation.Results) > resultCount && shouldBlockRelease(gate, evaluation.Results[len(evaluation.Results)-1]) {
+			evaluation.Status = DecisionBlocked
+		}
 	}
 
 	return evaluation, nil
+}
+
+func shouldBlockRelease(gate standard.Gate, result Result) bool {
+	if !gate.Required || result.Passed {
+		return false
+	}
+	return effectiveSeverity(gate) == standard.SeverityCritical
 }
 
 func evaluateCoverageGate(gate standard.Gate, label string, actual float64) Result {
@@ -93,7 +74,7 @@ func evaluateCoverageGate(gate standard.Gate, label string, actual float64) Resu
 	result := Result{
 		ID:          gate.ID,
 		Required:    gate.Required,
-		Severity:    gate.Severity,
+		Severity:    effectiveSeverity(gate),
 		Actual:      actual,
 		RequiredMin: requiredMin,
 	}
@@ -111,7 +92,7 @@ func evaluateExistsGate(gate standard.Gate, exists bool, passedMessage, failedMe
 	result := Result{
 		ID:       gate.ID,
 		Required: gate.Required,
-		Severity: gate.Severity,
+		Severity: effectiveSeverity(gate),
 		Passed:   exists,
 	}
 	if exists {
@@ -121,4 +102,11 @@ func evaluateExistsGate(gate standard.Gate, exists bool, passedMessage, failedMe
 
 	result.Message = failedMessage
 	return result
+}
+
+func effectiveSeverity(gate standard.Gate) standard.Severity {
+	if gate.Severity == "" {
+		return standard.SeverityMinor
+	}
+	return gate.Severity
 }

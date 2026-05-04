@@ -16,5 +16,13 @@ gates:
     severity: critical
     required: true
   - id: operations.runbook_exists
-    severity: major
     required: false
+  - id: observability.monitor_exists
+    required: false
+  - id: infra.deployment_spec_exists
+    required: false
+  - id: release.rollback_plan_exists
+    required: false
+  - id: release.automation_declared
+    severity: major
+    required: true

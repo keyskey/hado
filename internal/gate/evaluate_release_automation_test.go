@@ -11,7 +11,7 @@ func TestEvaluateReleaseAutomationDeclared(t *testing.T) {
 	evaluation, err := Evaluate(standard.Standard{
 		ID: "test-standard",
 		Gates: []standard.Gate{
-			{ID: standard.ReleaseAutomationDeclaredGateID, Required: true},
+			{ID: standard.ReleaseAutomationDeclaredGateID, Severity: standard.SeverityCritical, Required: true},
 		},
 	}, Metrics{ReleaseAutomationDeclared: true})
 	if err != nil {
@@ -27,7 +27,7 @@ func TestEvaluateReleaseAutomationDeclaredBlockedWhenFalse(t *testing.T) {
 	evaluation, err := Evaluate(standard.Standard{
 		ID: "test-standard",
 		Gates: []standard.Gate{
-			{ID: standard.ReleaseAutomationDeclaredGateID, Required: true},
+			{ID: standard.ReleaseAutomationDeclaredGateID, Severity: standard.SeverityCritical, Required: true},
 		},
 	}, Metrics{})
 	if err != nil {

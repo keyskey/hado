@@ -12,3 +12,14 @@ evidence:
   operations:
     owner: keyskey
     runbook: ""
+  observability:
+    slo: ""
+    monitors: ""
+    dashboard: ""
+  infra:
+    deployment_spec: ""
+  release:
+    rollback_plan: ""
+    automation:
+      workflow_refs:
+        - ""

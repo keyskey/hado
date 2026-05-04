@@ -12,10 +12,12 @@ func TestEvaluateReadyWhenOperationsEvidenceExists(t *testing.T) {
 		Gates: []standard.Gate{
 			{
 				ID:       standard.OperationsOwnerExistsGateID,
+				Severity: standard.SeverityCritical,
 				Required: true,
 			},
 			{
 				ID:       standard.OperationsRunbookExistsGateID,
+				Severity: standard.SeverityCritical,
 				Required: true,
 			},
 		},
@@ -46,10 +48,12 @@ func TestEvaluateBlockedWhenOperationsEvidenceIsMissing(t *testing.T) {
 		Gates: []standard.Gate{
 			{
 				ID:       standard.OperationsOwnerExistsGateID,
+				Severity: standard.SeverityCritical,
 				Required: true,
 			},
 			{
 				ID:       standard.OperationsRunbookExistsGateID,
+				Severity: standard.SeverityCritical,
 				Required: true,
 			},
 		},
