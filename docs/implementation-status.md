@@ -14,7 +14,7 @@
 
 `evaluate` は廃止し、`target` / `charge` / `fire` に一本化した。
 
-`target` の主なフラグ（`cmd/hado/target.go` の `runTarget`）:
+`target` の主なフラグ（`cmd/hado/target/run.go` の `Run`）:
 
 - `--manifest`（必須）
 - `--service-name`（任意; 非 TTY では既存 manifest かフラグのどちらかが必要）
