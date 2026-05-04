@@ -1,6 +1,7 @@
 package evaluate
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
@@ -96,5 +97,43 @@ func TestReleaseActionHint(t *testing.T) {
 				t.Fatalf("releaseActionHint() = %q, want %q", got, tt.want)
 			}
 		})
+	}
+}
+
+func TestColorizationHelpers(t *testing.T) {
+	t.Parallel()
+
+	criticalFail := gate.Result{Passed: false, Required: true, Severity: standard.SeverityCritical}
+	majorFail := gate.Result{Passed: false, Required: true, Severity: standard.SeverityMajor}
+	pass := gate.Result{Passed: true, Required: true, Severity: standard.SeverityCritical}
+
+	if got := colorizedMarker(criticalFail, "FAIL", true); got != wrapColor("FAIL", ansiBoldRed) {
+		t.Fatalf("critical marker = %q", got)
+	}
+	if got := colorizedMarker(majorFail, "FAIL", true); got != wrapColor("FAIL", ansiYellow) {
+		t.Fatalf("major marker = %q", got)
+	}
+	if got := colorizedMarker(pass, "PASS", true); got != wrapColor("PASS", ansiGreen) {
+		t.Fatalf("pass marker = %q", got)
+	}
+	if got := colorizedSeverity(majorFail, "major", true); got != wrapColor("major", ansiYellow) {
+		t.Fatalf("major severity = %q", got)
+	}
+	if got := colorizedSummary("HADO: READY", gate.DecisionReady, true); got != wrapColor("HADO: READY", ansiBoldGreen) {
+		t.Fatalf("ready summary = %q", got)
+	}
+	if got := colorizedSummary("HADO: BLOCKED", gate.DecisionBlocked, true); got != wrapColor("HADO: BLOCKED", ansiBoldRed) {
+		t.Fatalf("blocked summary = %q", got)
+	}
+	if got := colorizedSummary("HADO: ERROR", gate.DecisionError, true); got != wrapColor("HADO: ERROR", ansiBoldMagenta) {
+		t.Fatalf("error summary = %q", got)
+	}
+}
+
+func TestWrapColor(t *testing.T) {
+	t.Parallel()
+	want := fmt.Sprintf("%s%s%s", ansiGreen, "PASS", ansiReset)
+	if got := wrapColor("PASS", ansiGreen); got != want {
+		t.Fatalf("wrapColor() = %q, want %q", got, want)
 	}
 }

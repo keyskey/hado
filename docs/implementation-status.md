@@ -31,7 +31,7 @@
 - `--coverage-input`（繰り返し可; `<adapter>:<path>`。**指定時は manifest の `evidence.coverage.inputs` より優先**）
 - `--output`：`text` または `json`（それ以外はエラー）
 
-`--output text` は各 gate の判定行に `severity` を表示し、FAIL 行には「リリース前に必須対応か / リリース後対応可か」の運用ヒントを併記する。総合判定（`HADO: READY/BLOCKED/ERROR`）は一覧の最後に出力する。
+`--output text` は各 gate の判定行に `severity` を表示し、FAIL 行には「リリース前に必須対応か / リリース後対応可か」の運用ヒントを併記する。総合判定（`HADO: READY/BLOCKED/ERROR`）は一覧の最後に出力する。TTY では ANSI カラーを付与し、`PASS` は緑、`FAIL` は赤/黄（required+critical の FAIL を最強調）で表示する（`NO_COLOR` が設定されている場合は無効）。
 
 **Coverage 入力の必須条件:** Readiness Standard が `test.c0_coverage` または `test.c1_coverage` のいずれかを含む場合、`--coverage-input` か manifest の `evidence.coverage.inputs` のどちらかが必要。どちらも無いと `evaluate` はエラー終了（exit 2）。
 
