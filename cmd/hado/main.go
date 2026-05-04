@@ -95,14 +95,22 @@ func runEvaluate(args []string, stdout, stderr io.Writer) (int, error) {
 		metrics.C1CoveragePercent = coverageMetrics.C1Coverage
 	}
 	if hadoManifest != nil {
-		metrics.OperationsOwner = strings.TrimSpace(hadoManifest.Evidence.Operations.Owner)
-		metrics.OperationsRunbook = strings.TrimSpace(hadoManifest.Evidence.Operations.Runbook)
-		metrics.ObservabilitySLO = strings.TrimSpace(hadoManifest.Evidence.Observability.SLO)
-		metrics.ObservabilityMonitors = strings.TrimSpace(hadoManifest.Evidence.Observability.Monitors)
-		metrics.ObservabilityDashboard = strings.TrimSpace(hadoManifest.Evidence.Observability.Dashboard)
-		metrics.ReleaseRollbackPlan = strings.TrimSpace(hadoManifest.Evidence.Release.RollbackPlan)
-		metrics.ReleaseAutomationDeclared = hadoManifest.Evidence.Release.AutomationDeclared()
-		metrics.InfraDeploymentSpec = strings.TrimSpace(hadoManifest.Evidence.Infra.DeploymentSpec)
+		if op := hadoManifest.Evidence.Operations; op != nil {
+			metrics.OperationsOwner = strings.TrimSpace(op.Owner)
+			metrics.OperationsRunbook = strings.TrimSpace(op.Runbook)
+		}
+		if obs := hadoManifest.Evidence.Observability; obs != nil {
+			metrics.ObservabilitySLO = strings.TrimSpace(obs.SLO)
+			metrics.ObservabilityMonitors = strings.TrimSpace(obs.Monitors)
+			metrics.ObservabilityDashboard = strings.TrimSpace(obs.Dashboard)
+		}
+		if rel := hadoManifest.Evidence.Release; rel != nil {
+			metrics.ReleaseRollbackPlan = strings.TrimSpace(rel.RollbackPlan)
+			metrics.ReleaseAutomationDeclared = rel.AutomationDeclared()
+		}
+		if inf := hadoManifest.Evidence.Infra; inf != nil {
+			metrics.InfraDeploymentSpec = strings.TrimSpace(inf.DeploymentSpec)
+		}
 	}
 
 	evaluation, err := gate.Evaluate(readinessStandard, metrics)
