@@ -93,9 +93,9 @@ func applyManifestEvidence(metrics *gate.Metrics, hadoManifest manifest.Manifest
 		metrics.OperationsRunbook = strings.TrimSpace(op.Runbook)
 	}
 	if obs := hadoManifest.Evidence.Observability; obs != nil {
-		metrics.ObservabilitySLO = strings.TrimSpace(obs.SLO)
-		metrics.ObservabilityMonitors = strings.TrimSpace(obs.Monitors)
-		metrics.ObservabilityDashboard = strings.TrimSpace(obs.Dashboard)
+		metrics.ObservabilitySLOPresent = manifest.ObservabilityLinksHaveURL(obs.SLOs)
+		metrics.ObservabilityMonitorsPresent = manifest.ObservabilityLinksHaveURL(obs.Monitors)
+		metrics.ObservabilityDashboardPresent = manifest.ObservabilityLinksHaveURL(obs.Dashboards)
 	}
 	if rel := hadoManifest.Evidence.Release; rel != nil {
 		metrics.ReleaseRollbackPlan = strings.TrimSpace(rel.RollbackPlan)

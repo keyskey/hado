@@ -87,11 +87,14 @@ Evidence は、gate 評価に使う証拠である。
 coverage.out
   Go test coverage profile
 
-slo.yaml
-  SLO / SLI 定義
+evidence.observability.slos[].url
+  SLO / SLI をブラウザで開ける URL（例: Datadog SLO 管理画面）
 
-datadog-monitors.yaml
-Datadog monitor 定義
+evidence.observability.monitors[].url
+  アラート / モニターの URL（例: Datadog monitor）
+
+evidence.observability.dashboards[].url
+  ダッシュボードの URL
 
 Datadog service catalog metadata
   owner, lifecycle, system, tier, runbook, oncall など

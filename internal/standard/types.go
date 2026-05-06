@@ -20,11 +20,11 @@ const (
 	// OperationsRunbookExistsGateID is the gate id used for operational runbook readiness.
 	OperationsRunbookExistsGateID = "operations.runbook_exists"
 
-	// ObservabilitySLOExistsGateID gates on declared SLO / SLI evidence (manifest reference non-empty).
+	// ObservabilitySLOExistsGateID gates on at least one URL in evidence.observability.slos.
 	ObservabilitySLOExistsGateID = "observability.slo_exists"
-	// ObservabilityMonitorExistsGateID gates on monitor / alert evidence reference.
+	// ObservabilityMonitorExistsGateID gates on at least one URL in evidence.observability.monitors.
 	ObservabilityMonitorExistsGateID = "observability.monitor_exists"
-	// ObservabilityDashboardExistsGateID gates on dashboard evidence reference.
+	// ObservabilityDashboardExistsGateID gates on at least one URL in evidence.observability.dashboards.
 	ObservabilityDashboardExistsGateID = "observability.dashboard_exists"
 
 	// InfraDeploymentSpecExistsGateID gates on a deployment / workload spec reference (path, bundle id, URL, etc.).

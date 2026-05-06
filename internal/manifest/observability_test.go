@@ -11,9 +11,15 @@ func TestLoadReturnsObservabilityEvidence(t *testing.T) {
 	if err := os.WriteFile(manifestPath, []byte(`version: v1
 evidence:
   observability:
-    slo: slo.yaml
-    monitors: monitors.yaml
-    dashboard: dash.json
+    slos:
+      - name: api availability
+        url: https://app.datadoghq.com/slo?slo_id=a
+    monitors:
+      - name: latency
+        url: https://app.datadoghq.com/monitors/1
+    dashboards:
+      - name: perf
+        url: https://app.datadoghq.com/dashboard/bbb
 `), 0o600); err != nil {
 		t.Fatalf("write manifest: %v", err)
 	}
@@ -26,13 +32,14 @@ evidence:
 	if hadoManifest.Evidence.Observability == nil {
 		t.Fatal("observability evidence is nil")
 	}
-	if got := hadoManifest.Evidence.Observability.SLO; got != "slo.yaml" {
-		t.Fatalf("observability.slo = %q", got)
+	o := hadoManifest.Evidence.Observability
+	if len(o.SLOs) != 1 || o.SLOs[0].Name != "api availability" || o.SLOs[0].URL != "https://app.datadoghq.com/slo?slo_id=a" {
+		t.Fatalf("slos = %+v", o.SLOs)
 	}
-	if got := hadoManifest.Evidence.Observability.Monitors; got != "monitors.yaml" {
-		t.Fatalf("observability.monitors = %q", got)
+	if len(o.Monitors) != 1 || o.Monitors[0].URL != "https://app.datadoghq.com/monitors/1" {
+		t.Fatalf("monitors = %+v", o.Monitors)
 	}
-	if got := hadoManifest.Evidence.Observability.Dashboard; got != "dash.json" {
-		t.Fatalf("observability.dashboard = %q", got)
+	if len(o.Dashboards) != 1 || o.Dashboards[0].URL != "https://app.datadoghq.com/dashboard/bbb" {
+		t.Fatalf("dashboards = %+v", o.Dashboards)
 	}
 }

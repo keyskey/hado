@@ -20,9 +20,15 @@ gates:
 	manifestPath := writeFile(t, dir, "hado.yaml", `version: v1
 evidence:
   observability:
-    slo: slo.yaml
-    monitors: monitors.tf
-    dashboard: https://example.com/board/1
+    slos:
+      - name: slo
+        url: https://app.datadoghq.com/slo/manage?slo_id=x
+    monitors:
+      - name: mon
+        url: https://app.datadoghq.com/monitors/1
+    dashboards:
+      - name: dash
+        url: https://example.com/board/1
 `)
 
 	var stdout, stderr bytes.Buffer

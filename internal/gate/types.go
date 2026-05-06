@@ -20,9 +20,9 @@ type Metrics struct {
 	C1CoveragePercent         *float64
 	OperationsOwner           string
 	OperationsRunbook         string
-	ObservabilitySLO          string
-	ObservabilityMonitors     string
-	ObservabilityDashboard    string
+	ObservabilitySLOPresent       bool
+	ObservabilityMonitorsPresent  bool
+	ObservabilityDashboardPresent bool
 	ReleaseRollbackPlan       string
 	ReleaseAutomationDeclared bool
 	InfraDeploymentSpec       string
