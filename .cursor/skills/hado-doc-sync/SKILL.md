@@ -26,21 +26,24 @@ description: >-
 2. **`docs/implementation-status.md` を更新**  
    - 実装済みゲートの箇条書き（`internal/gate/evaluate.go` の `switch` と一致）  
    - coverage adapter 一覧（`internal/coverage/parse.go` の `Format*` 定数と一致）  
-   - `hado evaluate` のフラグ・`--output` の取りうる値・終了コードの説明（`cmd/hado/main.go` と一致）  
+   - `hado target` / `charge` / `fire` / `manifest doc` のフラグ・`--output` の取りうる値・終了コードの説明（`cmd/hado` と一致）  
    - MVP / 未実装として追いたい項目があれば表や箇条書きで維持（ロードマップの [docs/roadmap.md](docs/roadmap.md) と矛盾させない）
 
-3. **`docs/roadmap.md`**  
+3. **`docs/hado.manifest.reference.yaml`**  
+   - `internal/manifest/types.go` または `field_docs.go` を変えたら **`make gen-manifest-doc`** で再生成し、同じ変更セットに含める。
+
+4. **`docs/roadmap.md`**  
    「このリポジトリの現状」の要約が古ければ 2〜3 文だけ直す。詳細は `implementation-status.md` に任せる。
 
-4. **利用者向け**  
-   ルート `README.md` の Evaluate 例やフラグ説明がずれていたら合わせる。
+5. **利用者向け**  
+   ルート `README.md` の CLI 例やフラグ説明がずれていたら合わせる。
 
-5. **push / PR 前**  
+6. **push / PR 前**  
    `docs/` や `README.md` を触れたら `make lint`（少なくとも `make lint-markdown`）を通す。pre-push を使うなら `make setup-hooks`（[docs/local-development.md](docs/local-development.md)）。
 
 ## やらないこと
 
-- `make docstatus` や Go 製ジェネレータは**ない**（手書き＋この Skill）。
+- `make docstatus` のような別コマンドは**ない**。Manifest の参考 YAML（コメント付き）は **`make gen-manifest-doc`**（`hado manifest doc`）で生成し、それ以外は手書き＋この Skill。
 - 実装と無関係な長いロードマップの書き換えは、ユーザーが求めた範囲に留める。
 
 ## 参照
