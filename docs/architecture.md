@@ -214,6 +214,8 @@ Report
 
 `hado.yaml` は、評価対象サービスが自分自身と evidence の場所を宣言するファイルである。単なる設定ではなく、リリース準備状態の入口になる manifest として扱う。
 
+**コメント付きの全プロパティ一覧:** [hado.manifest.reference.yaml](hado.manifest.reference.yaml) を `make gen-manifest-doc`（`hado manifest doc`）で再生成する。
+
 **実装済みのトップレベル（v1）:** `service`（`id` / `name`）と `standard`（`id`：Readiness Standard の論理 id または標準 YAML へのパス）は `hado target` が書き込める。`evidence` 以下の形はこのリポジトリの [実装状況](implementation-status.md) に従う。
 
 ```yaml

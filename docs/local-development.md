@@ -53,6 +53,7 @@ make lint       # YAML, Markdown, Go の lint
 make fmt        # Go ファイルを gofmt で整形
 make fmt-check  # Go の整形漏れチェック (CI 相当)
 make test       # Go テスト
+make gen-manifest-doc  # docs/hado.manifest.reference.yaml を型から再生成
 make readiness-check # coverage evidence 生成 + HADO 自身の readiness 評価
 make ci-lint    # fmt-check + lint（CI Lint ジョブ・pre-push と同じ; go test なし）
 make pre-pr     # ci-lint + test（ローカルで PR 前にまとめて叩く用）
