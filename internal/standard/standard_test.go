@@ -110,11 +110,11 @@ func TestLoadCLIServiceStandard(t *testing.T) {
 	if !loaded.RequiresGate(OperationsRunbookExistsGateID) {
 		t.Fatal("cli-service standard should require operations runbook gate")
 	}
-	if !loaded.RequiresGate(ObservabilityMonitorExistsGateID) {
-		t.Fatal("cli-service standard should declare observability monitor gate")
+	if loaded.RequiresGate(ObservabilityMonitorExistsGateID) {
+		t.Fatal("cli-service standard should omit observability gates (CLI workload; no SLO/monitor/dashboard in manifest)")
 	}
-	if !loaded.RequiresGate(InfraDeploymentSpecExistsGateID) {
-		t.Fatal("cli-service standard should declare infra deployment spec gate")
+	if loaded.RequiresGate(InfraDeploymentSpecExistsGateID) {
+		t.Fatal("cli-service standard should omit infra.deployment_spec_exists (CLI workload)")
 	}
 	if !loaded.RequiresGate(ReleaseRollbackPlanExistsGateID) {
 		t.Fatal("cli-service standard should declare release rollback plan gate")

@@ -15,7 +15,11 @@ alwaysApply: false
 2. **ロードマップの「現状」**  
    - [docs/roadmap.md](docs/roadmap.md) の「このリポジトリの現状」が古くなっていたら、要約を直す（詳細は `implementation-status.md` に寄せてよい）。
 
-3. **README / アーキテクチャ**  
+3. **`internal/manifest/types.go` の型を変えた場合**  
+   - [`internal/manifest/field_docs.go`](internal/manifest/field_docs.go) に **YAML パスごとの説明**を追加・更新する（`TestManifestYAMLDocComplete` が不足・余剰キーで失敗する）。  
+   - [`docs/hado.manifest.reference.yaml`](docs/hado.manifest.reference.yaml) を `make gen-manifest-doc` で再生成して同じ PR に含める。
+
+4. **README / アーキテクチャ**  
    - 利用者向けの CLI 説明（ルート [README.md](README.md) や [docs/architecture.md](docs/architecture.md)）が実装と矛盾していたら合わせる。
 
 ゲートを `internal/gate/evaluate.go` に追加したら、**必ず** `implementation-status.md` の実装済みゲート一覧と、必要なら `roadmap.md` の Phase 3 記述を更新する。

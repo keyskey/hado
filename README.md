@@ -22,6 +22,7 @@ HADO という名前は「波動砲」から来ています。波動砲は、日
 
 - [Project HADO ドキュメント](docs/README.md)
 - [実装状況（手保守; Cursor Skill `hado-doc-sync`）](docs/implementation-status.md)
+- [HADO Manifest 参考（型から生成するコメント付き YAML）](docs/hado.manifest.reference.yaml)（`make gen-manifest-doc` で再生成）
 - [ローカル開発コマンド](docs/local-development.md)
 
 ## Build and run

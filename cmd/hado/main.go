@@ -7,6 +7,7 @@ import (
 
 	chargecmd "github.com/keyskey/hado/cmd/hado/charge"
 	firecmd "github.com/keyskey/hado/cmd/hado/fire"
+	manifestcmd "github.com/keyskey/hado/cmd/hado/manifestcmd"
 	targetcmd "github.com/keyskey/hado/cmd/hado/target"
 )
 
@@ -22,7 +23,7 @@ func main() {
 
 func run(args []string, stdout, stderr io.Writer) (int, error) {
 	if len(args) == 0 {
-		fmt.Fprintln(stdout, "hado: production readiness CLI")
+		fmt.Fprintln(stdout, "hado: production readiness CLI (try: charge, fire, target, manifest doc)")
 		return 0, nil
 	}
 
@@ -36,6 +37,8 @@ func run(args []string, stdout, stderr io.Writer) (int, error) {
 		return firecmd.Run(args[1:], stdout, stderr)
 	case "target":
 		return targetcmd.Run(args[1:], os.Stdin, stdout, stderr)
+	case "manifest":
+		return manifestcmd.Run(args[1:], stdout, stderr)
 	default:
 		return 2, fmt.Errorf("unknown command %q", args[0])
 	}

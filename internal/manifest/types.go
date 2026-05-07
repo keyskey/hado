@@ -1,5 +1,7 @@
 package manifest
 
+import "strings"
+
 // Manifest declares the evaluated service and the evidence HADO should read.
 type Manifest struct {
 	Version  string      `yaml:"version" json:"version,omitempty"`
@@ -48,11 +50,27 @@ type OperationsEvidence struct {
 	Runbook string `yaml:"runbook" json:"runbook,omitempty"`
 }
 
-// ObservabilityEvidence declares references to SLO, monitors, and dashboard evidence (paths, URLs, or catalog IDs).
+// ObservabilityLink is a named, browser-openable URL for SLO, monitor, or dashboard evidence (audit / ops).
+type ObservabilityLink struct {
+	Name string `yaml:"name,omitempty" json:"name,omitempty"`
+	URL  string `yaml:"url" json:"url"`
+}
+
+// ObservabilityEvidence declares observability evidence as lists of links (typically vendor UI URLs).
 type ObservabilityEvidence struct {
-	SLO       string `yaml:"slo" json:"slo,omitempty"`
-	Monitors  string `yaml:"monitors" json:"monitors,omitempty"`
-	Dashboard string `yaml:"dashboard" json:"dashboard,omitempty"`
+	SLOs       []ObservabilityLink `yaml:"slos,omitempty" json:"slos,omitempty"`
+	Monitors   []ObservabilityLink `yaml:"monitors,omitempty" json:"monitors,omitempty"`
+	Dashboards []ObservabilityLink `yaml:"dashboards,omitempty" json:"dashboards,omitempty"`
+}
+
+// ObservabilityLinksHaveURL reports whether at least one entry has a non-empty URL after trimming spaces.
+func ObservabilityLinksHaveURL(links []ObservabilityLink) bool {
+	for _, l := range links {
+		if strings.TrimSpace(l.URL) != "" {
+			return true
+		}
+	}
+	return false
 }
 
 // InfraEvidence declares infrastructure-related evidence references (deployment spec, IaC pointer, etc.).

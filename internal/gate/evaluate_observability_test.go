@@ -7,41 +7,46 @@ import (
 )
 
 func TestEvaluateObservabilityReady(t *testing.T) {
-	evaluation, err := Evaluate(standard.Standard{
-		ID: "test-standard",
+	st := standard.Standard{
 		Gates: []standard.Gate{
 			{ID: standard.ObservabilitySLOExistsGateID, Required: true},
 			{ID: standard.ObservabilityMonitorExistsGateID, Required: true},
 			{ID: standard.ObservabilityDashboardExistsGateID, Required: true},
 		},
-	}, Metrics{
-		ObservabilitySLO:       "slo.yaml",
-		ObservabilityMonitors:  "monitors.yaml",
-		ObservabilityDashboard: "https://example.com/dash",
+	}
+	eval, err := Evaluate(st, Metrics{
+		ObservabilitySLOPresent:       true,
+		ObservabilityMonitorsPresent:  true,
+		ObservabilityDashboardPresent: true,
 	})
 	if err != nil {
-		t.Fatalf("Evaluate: %v", err)
+		t.Fatal(err)
 	}
-	if evaluation.Status != DecisionReady {
-		t.Fatalf("status = %q, want %q", evaluation.Status, DecisionReady)
+	for _, r := range eval.Results {
+		if !r.Passed {
+			t.Fatalf("%s: want pass, got %s", r.ID, r.Message)
+		}
 	}
 }
 
 func TestEvaluateObservabilityBlockedWhenDashboardEmpty(t *testing.T) {
-	evaluation, err := Evaluate(standard.Standard{
-		ID: "test-standard",
+	st := standard.Standard{
 		Gates: []standard.Gate{
 			{ID: standard.ObservabilityDashboardExistsGateID, Severity: standard.SeverityCritical, Required: true},
 		},
-	}, Metrics{
-		ObservabilitySLO:       "ok",
-		ObservabilityMonitors:  "ok",
-		ObservabilityDashboard: "",
+	}
+	eval, err := Evaluate(st, Metrics{
+		ObservabilitySLOPresent:       true,
+		ObservabilityMonitorsPresent:  true,
+		ObservabilityDashboardPresent: false,
 	})
 	if err != nil {
-		t.Fatalf("Evaluate: %v", err)
+		t.Fatal(err)
 	}
-	if evaluation.Status != DecisionBlocked {
-		t.Fatalf("status = %q, want %q", evaluation.Status, DecisionBlocked)
+	if len(eval.Results) != 1 {
+		t.Fatalf("results = %#v", eval.Results)
+	}
+	if eval.Results[0].Passed {
+		t.Fatal("expected dashboard gate to fail")
 	}
 }

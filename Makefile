@@ -1,4 +1,4 @@
-.PHONY: help setup setup-hooks bootstrap-go ensure-go build check-docker ci-lint lint lint-go lint-yaml lint-markdown fmt fmt-go fmt-check test readiness-check pre-pr
+.PHONY: help setup setup-hooks bootstrap-go ensure-go build check-docker ci-lint lint lint-go lint-yaml lint-markdown fmt fmt-go fmt-check test readiness-check pre-pr gen-manifest-doc
 
 # Optional local toolchain: official tarball under .gitignored .tools/go (see bootstrap-go).
 # Prefer it when present so Make works without a global install; otherwise use `go` on PATH.
@@ -28,6 +28,7 @@ help:
 	@echo "  make fmt          # Format Go source files"
 	@echo "  make fmt-check    # Used in make ci-lint (does not run go test)"
 	@echo "  make test         # Run Go tests"
+	@echo "  make gen-manifest-doc # Regenerate docs/hado.manifest.reference.yaml (commented reference manifest)"
 	@echo "  make readiness-check # Generate HADO coverage evidence and run charge/fire"
 	@echo "  make ci-lint      # fmt-check + lint (GitHub Lint job + pre-push; no go test)"
 	@echo "  make setup-hooks  # pre-push runs: make ci-lint"
@@ -83,6 +84,11 @@ setup-hooks:
 build: ensure-go
 	@mkdir -p bin
 	$(GO_CMD) build -o "$(BINARY)" ./cmd/hado
+
+gen-manifest-doc: ensure-go
+	@mkdir -p bin
+	$(GO_CMD) run ./cmd/hado manifest doc --out docs/hado.manifest.reference.yaml
+	@echo "Wrote docs/hado.manifest.reference.yaml"
 
 check-docker:
 	@command -v docker >/dev/null 2>&1 || { echo "docker is required for YAML/Markdown lint."; exit 1; }

@@ -13,7 +13,7 @@ type ApplyEvidenceScaffoldOptions struct {
 }
 
 // ApplyEvidenceScaffold ensures evidence blocks and string fields exist for gates declared in the standard.
-// String fields are left empty so YAML lists keys (e.g. owner: "") for humans or charge to fill later.
+// String fields and observability link rows are left empty so YAML lists keys for humans or charge to fill later.
 // Only gate IDs understood by the evaluator are mapped; unknown gates are skipped.
 func ApplyEvidenceScaffold(m *Manifest, st standard.Standard, opts ApplyEvidenceScaffoldOptions) {
 	merge := opts.MergeOnly
@@ -59,20 +59,20 @@ func ApplyEvidenceScaffold(m *Manifest, st standard.Standard, opts ApplyEvidence
 	}
 	if st.RequiresGate(standard.ObservabilitySLOExistsGateID) {
 		setObs()
-		if !(merge && strings.TrimSpace(m.Evidence.Observability.SLO) != "") {
-			m.Evidence.Observability.SLO = ""
+		if !(merge && ObservabilityLinksHaveURL(m.Evidence.Observability.SLOs)) {
+			m.Evidence.Observability.SLOs = []ObservabilityLink{{}}
 		}
 	}
 	if st.RequiresGate(standard.ObservabilityMonitorExistsGateID) {
 		setObs()
-		if !(merge && strings.TrimSpace(m.Evidence.Observability.Monitors) != "") {
-			m.Evidence.Observability.Monitors = ""
+		if !(merge && ObservabilityLinksHaveURL(m.Evidence.Observability.Monitors)) {
+			m.Evidence.Observability.Monitors = []ObservabilityLink{{}}
 		}
 	}
 	if st.RequiresGate(standard.ObservabilityDashboardExistsGateID) {
 		setObs()
-		if !(merge && strings.TrimSpace(m.Evidence.Observability.Dashboard) != "") {
-			m.Evidence.Observability.Dashboard = ""
+		if !(merge && ObservabilityLinksHaveURL(m.Evidence.Observability.Dashboards)) {
+			m.Evidence.Observability.Dashboards = []ObservabilityLink{{}}
 		}
 	}
 

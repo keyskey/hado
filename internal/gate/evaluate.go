@@ -32,13 +32,13 @@ func Evaluate(s standard.Standard, metrics Metrics) (Evaluation, error) {
 			result := evaluateExistsGate(gate, metrics.OperationsRunbook != "", "Operations runbook is defined.", "Operations runbook is not defined.")
 			evaluation.Results = append(evaluation.Results, result)
 		case standard.ObservabilitySLOExistsGateID:
-			result := evaluateExistsGate(gate, metrics.ObservabilitySLO != "", "SLO / SLI evidence is defined.", "SLO / SLI evidence is not defined.")
+			result := evaluateExistsGate(gate, metrics.ObservabilitySLOPresent, "SLO / SLI evidence is defined (at least one URL in evidence.observability.slos).", "SLO / SLI evidence is not defined (add slos[].url).")
 			evaluation.Results = append(evaluation.Results, result)
 		case standard.ObservabilityMonitorExistsGateID:
-			result := evaluateExistsGate(gate, metrics.ObservabilityMonitors != "", "Monitor evidence is defined.", "Monitor evidence is not defined.")
+			result := evaluateExistsGate(gate, metrics.ObservabilityMonitorsPresent, "Monitor evidence is defined (at least one URL in evidence.observability.monitors).", "Monitor evidence is not defined (add monitors[].url).")
 			evaluation.Results = append(evaluation.Results, result)
 		case standard.ObservabilityDashboardExistsGateID:
-			result := evaluateExistsGate(gate, metrics.ObservabilityDashboard != "", "Dashboard evidence is defined.", "Dashboard evidence is not defined.")
+			result := evaluateExistsGate(gate, metrics.ObservabilityDashboardPresent, "Dashboard evidence is defined (at least one URL in evidence.observability.dashboards).", "Dashboard evidence is not defined (add dashboards[].url).")
 			evaluation.Results = append(evaluation.Results, result)
 		case standard.InfraDeploymentSpecExistsGateID:
 			result := evaluateExistsGate(gate, metrics.InfraDeploymentSpec != "", "Deployment spec reference is defined.", "Deployment spec reference is not defined.")
