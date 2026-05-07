@@ -1,3 +1,4 @@
-// Package integration defines contracts and shared plumbing for external
-// system integrations (for example observability readiness and Datadog).
+// Package integration holds thin HTTP/API clients for external systems.
+// Vendor-specific code lives in subpackages (for example datadog).
+// HADO manifest schemas and gate IDs must not be imported from here.
 package integration
